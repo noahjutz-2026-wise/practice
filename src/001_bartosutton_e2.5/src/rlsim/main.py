@@ -28,8 +28,8 @@ def runs(args: SimulationArgs, n_runs: int) -> NDArray[np.float64]:
 
 
 def main():
-    n_runs = 2_000
-    n_steps = 1_000
+    n_runs = 20_000
+    n_steps = 50
     configurations = [
         SimulationArgs(
             n_actions=10,
@@ -60,8 +60,10 @@ def main():
         [data1, data2] = dataset
         ax1.plot(data1, label=i)
         ax2.plot(data2, label=i)
-    ax1.legend()
-    ax2.legend()
+    for ax in (ax1, ax2):
+        ax.legend()
+        ax.minorticks_on()
+        ax.grid(which="both")
     ax1.set_title("Average Reward")
     ax2.set_title("% Optimal Action")
     plt.show()
