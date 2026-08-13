@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 from rlsim.simulation import Simulation
 
 
@@ -8,3 +10,5 @@ def main():
     n_steps = 10_000
     result = simulation.run(epsilon, lambda n: alpha, n_steps)
     print(result)
+    plt.plot(result)
+    plt.show()
