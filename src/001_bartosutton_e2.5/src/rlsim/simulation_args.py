@@ -9,3 +9,4 @@ class SimulationArgs:
     alpha: Callable[[int], float]
     n_steps: int
     initial_q: float
+    is_stationary: bool

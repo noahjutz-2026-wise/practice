@@ -28,21 +28,24 @@ def runs(args: SimulationArgs, n_runs: int) -> NDArray[np.float64]:
 
 
 def main():
-    n_runs = 500
+    n_runs = 2_000
+    n_steps = 1_000
     configurations = [
         SimulationArgs(
             n_actions=10,
             epsilon=0.1,
             alpha=action_value_constant(0.1),
-            n_steps=10_000,
+            n_steps=n_steps,
             initial_q=0,
+            is_stationary=True,
         ),
         SimulationArgs(
             n_actions=10,
             epsilon=0,
             alpha=action_value_constant(0.1),
-            n_steps=10_000,
+            n_steps=n_steps,
             initial_q=5,
+            is_stationary=True,
         ),
     ]
 

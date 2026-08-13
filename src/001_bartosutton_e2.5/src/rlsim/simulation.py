@@ -7,7 +7,9 @@ from rlsim.simulation_args import SimulationArgs
 class Simulation:
     def __init__(self, args: SimulationArgs) -> None:
         self.Q_star = np.ones(args.n_actions)  # rewards
-        self.Q = np.zeros(args.n_actions)  # action value estimates
+        self.Q = np.full(
+            args.n_actions, float(args.initial_q)
+        )  # action value estimates
         self.N = np.zeros(args.n_actions)  # number of action calls
         self.args = args
 
@@ -20,13 +22,16 @@ class Simulation:
     def run(self) -> NDArray[np.float64]:
         rewards = np.zeros(self.args.n_steps)
         optimality = np.zeros(self.args.n_steps)
+
+        if self.args.is_stationary:
+            self.Q_star = np.random.normal(0, 1, 10)
         for i in range(self.args.n_steps):
             is_explore = np.random.random() < self.args.epsilon
 
             if is_explore:
                 a = np.random.randint(0, 10)
             else:
-                a = int(np.argmax(self.Q))
+                a = np.random.choice(np.flatnonzero(self.Q == self.Q.max()))
 
             r = self.observe_reward(a)
 
@@ -34,8 +39,8 @@ class Simulation:
             alpha_n = self.args.alpha(self.N[a])
             self.Q[a] = self.estimate_next_value(a, r, alpha_n)
 
-            # simulate nonstationary problem
-            self.Q_star += np.random.normal(0, 0.1, 10)
+            if not self.args.is_stationary:
+                self.Q_star += np.random.normal(0, 0.1, 10)
 
             a_optimal = int(np.argmax(self.Q_star))
             rewards[i] = r
