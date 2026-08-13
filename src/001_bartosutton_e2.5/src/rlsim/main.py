@@ -5,9 +5,16 @@ from numpy.typing import NDArray
 from rlsim.simulation import Simulation
 
 
-def sample_average(n: int):
+def action_value_sample_average(n: int):
     n += 1  # 0-indexing to 1-indexing
     return 1 / n
+
+
+def action_value_constant(alpha: float):
+    def alpha_n(_n: int):
+        return alpha
+
+    return alpha_n
 
 
 def runs(simulation: Simulation, n_runs: int) -> NDArray[np.float64]:
@@ -20,7 +27,9 @@ def runs(simulation: Simulation, n_runs: int) -> NDArray[np.float64]:
 
 
 def main():
-    sim = Simulation(n_actions=10, epsilon=0.1, alpha=sample_average, n_steps=10_000)
+    sim = Simulation(
+        n_actions=10, epsilon=0.1, alpha=action_value_constant(0.1), n_steps=10_000
+    )
     data = runs(sim, 1_000)
     plt.plot(data)
     plt.show()
