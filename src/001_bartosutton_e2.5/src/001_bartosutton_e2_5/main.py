@@ -1,5 +1,8 @@
+from typing import Callable
+
 import matplotlib
 import numpy as np
+from numpy.typing import NDArray
 
 Q_star = np.ones(10)  # rewards
 Q = np.zeros(10)  # action value estimates
@@ -16,17 +19,27 @@ def estimate_next_value(action, reward, alpha):
     return Q[action] + alpha * (reward - Q[action])
 
 
-for i in range(10_000):
-    alpha_n = alpha  # constant
-    is_explore = np.random.random() < epsilon
-    if is_explore:
-        a = np.random.randint(0, 10)
-    else:
-        a = np.argmax(Q)
+def run(
+    epsilon: float, alpha: Callable[[int], float], n_steps: int
+) -> NDArray[np.float64]:
+    rewards = np.array(n_steps)
+    for i in range(n_steps):
+        alpha_n = alpha(i)
+        is_explore = np.random.random() < epsilon
+        if is_explore:
+            a = np.random.randint(0, 10)
+        else:
+            a = np.argmax(Q)
 
-    r = observe_reward(a)
+        r = observe_reward(a)
 
-    Q[a] = estimate_next_value(a, r, alpha_n)
+        Q[a] = estimate_next_value(a, r, alpha_n)
 
-    # todo walk q (rewards)
-    # todo log values for plotting
+        Q_star += np.random.normal(0, 0.1, 10)  # simulate nonstationary problem
+        print(Q_star)
+
+        # todo log values for plotting
+    return rewards
+
+
+run(epsilon, lambda n: alpha, 100)
