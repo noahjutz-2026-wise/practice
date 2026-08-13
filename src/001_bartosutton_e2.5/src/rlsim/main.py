@@ -7,7 +7,6 @@ from rlsim.simulation_args import SimulationArgs
 
 
 def action_value_sample_average(n: int):
-    n += 1  # 0-indexing to 1-indexing
     return 1 / n
 
 
@@ -29,9 +28,14 @@ def runs(args: SimulationArgs, n_runs: int) -> NDArray[np.float64]:
 
 
 def main():
-    args = SimulationArgs(
+    args_constant = SimulationArgs(
         n_actions=10, epsilon=0.1, alpha=action_value_constant(0.1), n_steps=10_000
     )
-    data = runs(args, 1_000)
-    plt.plot(data)
+    args_sample_average = SimulationArgs(
+        n_actions=10, epsilon=0.1, alpha=action_value_sample_average, n_steps=10_000
+    )
+    data_constant = runs(args_constant, 1_000)
+    data_sample_average = runs(args_sample_average, 1_000)
+    plt.plot(data_constant, label="Constant")
+    plt.plot(data_sample_average, label="Sample Average")
     plt.show()

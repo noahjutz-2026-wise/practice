@@ -8,6 +8,7 @@ class Simulation:
     def __init__(self, args: SimulationArgs) -> None:
         self.Q_star = np.ones(args.n_actions)  # rewards
         self.Q = np.zeros(args.n_actions)  # action value estimates
+        self.N = np.zeros(args.n_actions)  # number of action calls
         self.args = args
 
     def observe_reward(self, a: int):
@@ -19,7 +20,6 @@ class Simulation:
     def run(self) -> NDArray[np.float64]:
         rewards = np.zeros(self.args.n_steps)
         for i in range(self.args.n_steps):
-            alpha_n = self.args.alpha(i)
             is_explore = np.random.random() < self.args.epsilon
             if is_explore:
                 a = np.random.randint(0, 10)
@@ -28,6 +28,8 @@ class Simulation:
 
             r = self.observe_reward(a)
 
+            self.N[a] += 1
+            alpha_n = self.args.alpha(self.N[a])
             self.Q[a] = self.estimate_next_value(a, r, alpha_n)
 
             # simulate nonstationary problem
