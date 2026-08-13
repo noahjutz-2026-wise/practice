@@ -19,12 +19,15 @@ class Simulation:
 
     def run(self) -> NDArray[np.float64]:
         rewards = np.zeros(self.args.n_steps)
+        optimality = np.zeros(self.args.n_steps)
         for i in range(self.args.n_steps):
             is_explore = np.random.random() < self.args.epsilon
+
+            a_optimal = int(np.argmax(self.Q))
             if is_explore:
                 a = np.random.randint(0, 10)
             else:
-                a = int(np.argmax(self.Q))
+                a = a_optimal
 
             r = self.observe_reward(a)
 
@@ -36,4 +39,7 @@ class Simulation:
             self.Q_star += np.random.normal(0, 0.1, 10)
 
             rewards[i] = r
-        return rewards
+            optimality[i] = a == a_optimal
+
+        data = np.vstack((rewards, optimality))
+        return data
