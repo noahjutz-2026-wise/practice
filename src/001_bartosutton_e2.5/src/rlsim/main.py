@@ -40,10 +40,12 @@ def main():
 
     fig, (ax1, ax2) = plt.subplots(2, 1)
 
-    for label, dataset in {"c": data_constant, "sa": data_sample_average}:
+    for label, dataset in {"c": data_constant, "sa": data_sample_average}.items():
         [data1, data2] = dataset
         ax1.plot(data1, label=label)
         ax2.plot(data2, label=label)
     ax1.legend()
     ax2.legend()
+    ax1.set_title("Average Reward")
+    ax2.set_title("% Optimal Action")
     plt.show()
