@@ -40,10 +40,10 @@ def main():
 
     fig, (ax1, ax2) = plt.subplots(2, 1)
 
-    for dataset in [data_constant, data_sample_average]:
+    for label, dataset in {"c": data_constant, "sa": data_sample_average}:
         [data1, data2] = dataset
-        ax1.plot(data1, label="data1")
-        ax2.plot(data2, label="data2")
+        ax1.plot(data1, label=label)
+        ax2.plot(data2, label=label)
     ax1.legend()
     ax2.legend()
     plt.show()

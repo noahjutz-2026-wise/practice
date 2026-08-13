@@ -23,11 +23,10 @@ class Simulation:
         for i in range(self.args.n_steps):
             is_explore = np.random.random() < self.args.epsilon
 
-            a_optimal = int(np.argmax(self.Q))
             if is_explore:
                 a = np.random.randint(0, 10)
             else:
-                a = a_optimal
+                a = int(np.argmax(self.Q))
 
             r = self.observe_reward(a)
 
@@ -38,6 +37,7 @@ class Simulation:
             # simulate nonstationary problem
             self.Q_star += np.random.normal(0, 0.1, 10)
 
+            a_optimal = int(np.argmax(self.Q_star))
             rewards[i] = r
             optimality[i] = a == a_optimal
 
