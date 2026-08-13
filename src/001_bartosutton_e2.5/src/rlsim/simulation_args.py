@@ -8,3 +8,4 @@ class SimulationArgs:
     epsilon: float
     alpha: Callable[[int], float]
     n_steps: int
+    initial_q: float

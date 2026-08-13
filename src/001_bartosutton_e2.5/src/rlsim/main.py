@@ -28,22 +28,35 @@ def runs(args: SimulationArgs, n_runs: int) -> NDArray[np.float64]:
 
 
 def main():
-    n_runs = 1_000
-    args_constant = SimulationArgs(
-        n_actions=10, epsilon=0.1, alpha=action_value_constant(0.1), n_steps=10_000
-    )
-    args_sample_average = SimulationArgs(
-        n_actions=10, epsilon=0.1, alpha=action_value_sample_average, n_steps=10_000
-    )
-    data_constant = runs(args_constant, n_runs)
-    data_sample_average = runs(args_sample_average, n_runs)
+    n_runs = 500
+    configurations = [
+        SimulationArgs(
+            n_actions=10,
+            epsilon=0.1,
+            alpha=action_value_constant(0.1),
+            n_steps=10_000,
+            initial_q=0,
+        ),
+        SimulationArgs(
+            n_actions=10,
+            epsilon=0,
+            alpha=action_value_constant(0.1),
+            n_steps=10_000,
+            initial_q=5,
+        ),
+    ]
+
+    results = []
+    for args in configurations:
+        result = runs(args, n_runs)
+        results.append(result)
 
     fig, (ax1, ax2) = plt.subplots(2, 1)
 
-    for label, dataset in {"c": data_constant, "sa": data_sample_average}.items():
+    for i, dataset in enumerate(results):
         [data1, data2] = dataset
-        ax1.plot(data1, label=label)
-        ax2.plot(data2, label=label)
+        ax1.plot(data1, label=i)
+        ax2.plot(data2, label=i)
     ax1.legend()
     ax2.legend()
     ax1.set_title("Average Reward")
