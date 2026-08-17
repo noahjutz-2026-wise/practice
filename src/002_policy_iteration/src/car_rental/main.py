@@ -19,45 +19,53 @@ v = np.zeros((21, 21))
 
 # 2. Policy Evaluation
 def eval(pi: NDArray[np.int8], v: NDArray[np.float64], theta=0.1):
-    for s1, s2 in np.ndindex(v.shape):
-        v_old = v[s1, s2]
-        a = pi[s1, s2]
-        n1 = s1 - a
-        n2 = s2 + a
+    delta = 0
+    while True:
+        for s1, s2 in np.ndindex(v.shape):
+            v_old = v[s1, s2]
+            a = pi[s1, s2]
+            n1 = s1 - a
+            n2 = s2 + a
 
-        cost = -2 * abs(a)
-        n_out_1 = scipy.stats.poisson.expect(
-            lambda n: np.minimum(n1, n), args=(lambda_out[0],)
-        )
-        n_out_2 = scipy.stats.poisson.expect(
-            lambda n: np.minimum(n2, n), args=(lambda_out[1],)
-        )
-
-        value = 0
-        p_s1_ = [
-            sum(
-                scipy.stats.poisson.pmf(i, mu=lambda_in[0]) * scipy.stats.poisson.pmf(j, mu=lambda_out[0])
-                for i in range(12)
-                for j in range(12)
-                if s1_ == min(20, n1 - min(n1, j) + i)
+            n_moved = 2 * abs(a)
+            n_out_1 = scipy.stats.poisson.expect(
+                lambda n: np.minimum(n1, n), args=(lambda_out[0],)
             )
-            for s1_ in range(21)
-        ]
-        p_s2_ = [
-            sum(
-                scipy.stats.poisson.pmf(i, mu=lambda_in[1]) * scipy.stats.poisson.pmf(j, mu=lambda_out[1])
-                for i in range(12)
-                for j in range(12)
-                if s2_ == min(20, n2 - min(n2, j) + i)
+            n_out_2 = scipy.stats.poisson.expect(
+                lambda n: np.minimum(n2, n), args=(lambda_out[1],)
             )
-            for s2_ in range(21)
-        ]
 
-        for s1_ in range(21):
-            for s2_ in range(21):
-                value += p_s1_[s1_] * p_s2_[s2_] * v[s1_, s2_]
-        print(value)
-        exit(0)
+            value = 0.0
+            p_s1_ = [
+                sum(
+                    scipy.stats.poisson.pmf(i, mu=lambda_in[0])
+                    * scipy.stats.poisson.pmf(j, mu=lambda_out[0])
+                    for i in range(12)
+                    for j in range(12)
+                    if s1_ == min(20, n1 - min(n1, j) + i)
+                )
+                for s1_ in range(21)
+            ]
+            p_s2_ = [
+                sum(
+                    scipy.stats.poisson.pmf(i, mu=lambda_in[1])
+                    * scipy.stats.poisson.pmf(j, mu=lambda_out[1])
+                    for i in range(12)
+                    for j in range(12)
+                    if s2_ == min(20, n2 - min(n2, j) + i)
+                )
+                for s2_ in range(21)
+            ]
+
+            for s1_ in range(21):
+                for s2_ in range(21):
+                    value += p_s1_[s1_] * p_s2_[s2_] * v[s1_, s2_]
+
+            v[s1, s2] = -2 * n_moved + 10 * (n_out_1 + n_out_2) + gamma * value
+            delta = max(delta, abs(v_old - v[s1, s2]))
+            print(delta)
+            if delta < theta:
+                break
 
 
 def main():
