@@ -1,3 +1,5 @@
+import itertools
+
 import numpy as np
 import scipy
 from numpy.typing import NDArray
@@ -18,16 +20,16 @@ v = np.zeros((21, 21))
 
 
 # 2. Policy Evaluation
-def eval(pi: NDArray[np.int8], v: NDArray[np.float64], theta=0.1):
-    delta = 0
-    while True:
+def eval(pi: NDArray[np.int8], v: NDArray[np.float64], theta: float = 0.1):
+    for k in itertools.count(1):
+        delta = 0
         for s1, s2 in np.ndindex(v.shape):
             v_old = v[s1, s2]
             a = pi[s1, s2]
             n1 = s1 - a
             n2 = s2 + a
 
-            n_moved = 2 * abs(a)
+            n_moved = abs(a)
             n_out_1 = scipy.stats.poisson.expect(
                 lambda n: np.minimum(n1, n), args=(lambda_out[0],)
             )
@@ -63,9 +65,10 @@ def eval(pi: NDArray[np.int8], v: NDArray[np.float64], theta=0.1):
 
             v[s1, s2] = -2 * n_moved + 10 * (n_out_1 + n_out_2) + gamma * value
             delta = max(delta, abs(v_old - v[s1, s2]))
-            print(delta)
-            if delta < theta:
-                break
+            print(f"(k={k}, delta={delta}) ({s1},{s2}):{v[s1, s2]}")
+        if delta < theta:
+            print(v)
+            break
 
 
 def main():
