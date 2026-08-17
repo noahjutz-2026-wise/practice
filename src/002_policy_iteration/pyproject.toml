@@ -1,0 +1,17 @@
+[project]
+name = "car-rental"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Noah Jutz", email = "noah@noahjutz.com" }
+]
+requires-python = ">=3.14"
+dependencies = []
+
+[project.scripts]
+car-rental = "car_rental.main:main"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
