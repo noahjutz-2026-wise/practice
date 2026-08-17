@@ -1,7 +1,9 @@
 import itertools
 
+import matplotlib.pyplot as plt
 import numpy as np
 import scipy
+from matplotlib.animation import FuncAnimation
 from numpy.typing import NDArray
 
 # requests = out
@@ -15,12 +17,11 @@ lambda_out = [3, 4]
 lambda_in = [3, 2]
 
 # 1. Initialization
-pi = np.zeros((21, 21), dtype=np.int8)
-v = np.zeros((21, 21))
+pi = np.zeros((100, 21, 21), dtype=np.int8)
+v = np.zeros((100, 21, 21))
 
 
-def expected_return(s1: int, s2: int) -> float:
-    a = pi[s1, s2]
+def expected_return(s1: int, s2: int, a: int, v: NDArray[np.float32]) -> float:
     n1 = s1 - a
     n2 = s2 + a
 
@@ -63,20 +64,38 @@ def expected_return(s1: int, s2: int) -> float:
 
 # 2. Policy Evaluation
 def eval(pi: NDArray[np.int8], v: NDArray[np.float64], theta: float = 0.1):
+    k = 0
     for k in itertools.count(1):
         delta = 0
-        for s1, s2 in np.ndindex(v.shape):
+        v[k] = v[k - 1].copy()
+        pi[k] = pi[k - 1].copy()
+        for s1, s2 in itertools.product(range(v.shape[1]), range(v.shape[2])):
             s1 = int(s1)
             s2 = int(s2)
-            v_old = v[s1, s2]
-            v[s1, s2] = expected_return(s1, s2)
-            delta = max(delta, abs(v_old - v[s1, s2]))
-            print(f"(k={k}, delta={delta}) ({s1},{s2}):{v[s1, s2]}")
+            v_old = v[k - 1, s1, s2]
+            a = pi[k, s1, s2]
+            v[k, s1, s2] = expected_return(s1, s2, a, v[k - 1])
+            delta = max(delta, abs(v_old - v[k, s1, s2]))
+            print(f"(k={k}, delta={delta}) ({s1},{s2}):{v[k, s1, s2]}")
 
         if delta < theta:
-            print(v)
+            # print(v)
             break
+    return v[0:k]
 
 
 def main():
-    eval(pi, v)
+    fig, ax = plt.subplots()
+
+    init_data = np.random.rand(21, 21)
+    heatmap = ax.imshow(init_data, cmap="viridis", vmin=0, vmax=1000)
+    vals = eval(pi, v)
+
+    def update(frame_idx):
+        heatmap.set_data(vals[frame_idx])
+        ax.set_title(f"Iteration {frame_idx}")
+        return [heatmap]
+
+    ani = FuncAnimation(fig, update, frames=len(vals), blit=False, interval=100)
+
+    plt.show()
