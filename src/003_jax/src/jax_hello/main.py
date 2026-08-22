@@ -1,10 +1,16 @@
 import jax.numpy as jnp
-import matplotlib.pyplot as plt
+import numpy as np
+from jax import jit
+
+
+def norm(X):
+    X = X - X.mean(0)
+    return X / X.std(0)
 
 
 def main():
-    x_jnp = jnp.linspace(0, 10, 1000)
-    y_jnp = 2 * jnp.sin(x_jnp) * jnp.cos(x_jnp)
-    print(x_jnp.devices())
-    plt.plot(x_jnp, y_jnp)
-    plt.show()
+    norm_compiled = jit(norm)
+    np.random.seed(1701)
+    X = jnp.array(np.random.rand(10000, 10))
+    r = np.allclose(norm(X), norm_compiled(X), atol=1e-6)
+    print(r)
