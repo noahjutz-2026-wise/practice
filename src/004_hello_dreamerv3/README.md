@@ -15,13 +15,14 @@ Wrapper around Dreamerv3 that allows for quick configuration without modifying s
 uv run dreamer --env env.py --configs configs.yaml
 ```
 
-3. In your environment, create a portal client and exchange messages
+3. In your environment, create a portal client and listen to steps.
 
 ```py
 def client():
   import portal
   client = portal.Client('localhost:2222')
-  # todo how to exchange messages?
+  while True:
+      step = client.recv()
 
 client = portal.Client('localhost:2222')
 client_proc = portal.Process(client, start=True)
