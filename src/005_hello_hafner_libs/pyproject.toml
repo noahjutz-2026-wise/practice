@@ -1,0 +1,19 @@
+[project]
+name = "hello_hafner"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Noah Jutz", email = "git@noahjutz.anonaddy.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "scope>=0.7.1",
+]
+
+[project.scripts]
+hello_hafner = "hello_hafner.main:main"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
