@@ -108,6 +108,7 @@ dependencies = [
     "toolz==1.1.0",
     "tqdm==4.70.0",
     "traitlets==5.16.1",
+    "typer>=0.27.1",
     "typing-extensions==4.16.0",
     "typing-inspection==0.4.4",
     "urllib3==2.7.0",
@@ -120,7 +121,7 @@ dependencies = [
 ]
 
 [project.scripts]
-dreamer = "hello_dreamerv3.main:main"
+dreamer = "hello_dreamerv3.main:app"
 
 [build-system]
 requires = ["uv_build>=0.12.5,<0.13.0"]
