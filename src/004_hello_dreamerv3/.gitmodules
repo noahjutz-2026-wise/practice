@@ -1,0 +1,3 @@
+[submodule "vendor/dreamerv3"]
+	path = vendor/dreamerv3
+	url = https://github.com/danijar/dreamerv3
