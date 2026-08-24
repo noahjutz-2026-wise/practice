@@ -1,13 +1,14 @@
 import elements
-import numpy as np
 import embodied
+import numpy as np
 
 
 class MyEnv(embodied.Env):
     @property
     def obs_space(self):
         return {
-            "reward": elements.Space(np.uint8),
+            "feat": elements.Space(np.float32, (1,)),
+            "reward": elements.Space(np.float32),
             "is_first": elements.Space(bool),
             "is_last": elements.Space(bool),
             "is_terminal": elements.Space(bool),
@@ -23,9 +24,9 @@ class MyEnv(embodied.Env):
     def step(self, action):
         # A simple stub implementation
         return {
-            "reward": np.array(0, np.uint8),
+            "feat": np.array([0.0], np.float32),
+            "reward": np.array(0.0, np.float32),
             "is_first": np.array(False, bool),
             "is_last": np.array(False, bool),
             "is_terminal": np.array(False, bool),
         }
-
