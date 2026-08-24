@@ -9,3 +9,12 @@ RUN git clone --depth 1 https://github.com/danijar/dreamerv3.git && \
     git fetch --depth 1 origin ${DREAMER_COMMIT_SHA} && \
     git checkout ${DREAMER_COMMIT_SHA} && \
     rm -rf .git
+
+FROM ghcr.io/astral-sh/uv:python3.11-alpine AS build
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN uv init && \
+    uv add -r requirements.txt
