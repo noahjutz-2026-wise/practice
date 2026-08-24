@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.14"
 dependencies = [
+    "portal>=3.8.1",
     "scope>=0.7.1",
 ]
 
