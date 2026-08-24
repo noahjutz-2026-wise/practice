@@ -1,11 +1,18 @@
 # Hello Dreamerv3
 
-Simple application of the dreamerV3 RL Algorithm.
+Wrapper around Dreamerv3 that allows for quick configuration without modifying source code.
 
-## Running
+## Get Started
+
+1. Create two files to define your environment:
+
+- `env.py`: Must only contain a subclass of `embodied.Env`. Keep `step` empty, it is implemented by this project.
+- `configs.yaml`: Must be structured according to DreamerV3 `configs.yaml`.
+
+2. Invoke the wrapper
 
 ```bash
-uv run dreamerv3.main
+uv run dreamer --env env.py --configs configs.yaml
 ```
 
 ## Methodology
