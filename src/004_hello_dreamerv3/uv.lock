@@ -335,7 +335,7 @@ wheels = [
 [[package]]
 name = "dreamer"
 version = "3.3.1"
-source = { directory = "vendor/dreamerv3" }
+source = { editable = "vendor/dreamerv3" }
 dependencies = [
     { name = "ale-py" },
     { name = "autorom", extra = ["accept-rom-license"] },
@@ -716,7 +716,7 @@ requires-dist = [
     { name = "cryptography", specifier = "==50.0.0" },
     { name = "cycler", specifier = "==0.12.1" },
     { name = "decorator", specifier = "==5.3.1" },
-    { name = "dreamer", directory = "vendor/dreamerv3" },
+    { name = "dreamer", editable = "vendor/dreamerv3" },
     { name = "einops", specifier = "==0.8.2" },
     { name = "elements", specifier = "==3.22.0" },
     { name = "executing", specifier = "==2.2.1" },
