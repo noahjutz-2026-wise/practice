@@ -78,6 +78,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/02/e1/90b168a5dbc89a4e9b2206a99238f3ea3fc281052bb2dc236d4aa15e5e87/AutoROM-0.6.1-py3-none-any.whl", hash = "sha256:e734fdad23dc8e48897de013803eba3c9e109e028d5463a4817346f7f669604f", size = 9435, upload-time = "2023-04-06T15:29:06.995Z" },
 ]
 
+[package.optional-dependencies]
+accept-rom-license = [
+    { name = "autorom-accept-rom-license" },
+]
+
 [[package]]
 name = "autorom-accept-rom-license"
 version = "0.6.1"
@@ -325,6 +330,55 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/60/8b/32f9823da46cde7df2087faa08cd98d01b908f8dcab982cdba9c84e85355/decorator-5.3.1.tar.gz", hash = "sha256:4cbcdd55a6efadb9dbea26b858f4fb3264567b52d69ca0d25b721b553f60ea82", size = 58084, upload-time = "2026-05-18T06:03:28.057Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/05/7f/798705f5296a58ca505d600456748d1be48078eac8a7050d8a98bc9edb89/decorator-5.3.1-py3-none-any.whl", hash = "sha256:f47fe6fdbd2edd623ecfe36875d37aba411624e2670dd395dddae1358689bb3c", size = 10365, upload-time = "2026-05-18T06:03:26.517Z" },
+]
+
+[[package]]
+name = "dreamer"
+version = "3.3.1"
+source = { directory = "vendor/dreamerv3" }
+dependencies = [
+    { name = "ale-py" },
+    { name = "autorom", extra = ["accept-rom-license"] },
+    { name = "av" },
+    { name = "chex" },
+    { name = "colored-traceback" },
+    { name = "einops" },
+    { name = "elements" },
+    { name = "google-resumable-media" },
+    { name = "granular" },
+    { name = "ipdb" },
+    { name = "jax", extra = ["cuda12"] },
+    { name = "jaxtyping" },
+    { name = "ninjax" },
+    { name = "numpy" },
+    { name = "nvidia-cuda-nvcc-cu12" },
+    { name = "optax" },
+    { name = "portal" },
+    { name = "scope" },
+    { name = "tqdm" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "ale-py", specifier = "==0.9.0" },
+    { name = "autorom", extras = ["accept-rom-license"], specifier = "==0.6.1" },
+    { name = "av" },
+    { name = "chex" },
+    { name = "colored-traceback" },
+    { name = "einops" },
+    { name = "elements", specifier = ">=3.19.1" },
+    { name = "google-resumable-media", specifier = ">=2.7.2" },
+    { name = "granular", specifier = ">=0.20.3" },
+    { name = "ipdb" },
+    { name = "jax", extras = ["cuda12"], specifier = "==0.4.33" },
+    { name = "jaxtyping" },
+    { name = "ninjax", specifier = ">=3.5.1" },
+    { name = "numpy", specifier = "<2" },
+    { name = "nvidia-cuda-nvcc-cu12", specifier = "<=12.2" },
+    { name = "optax" },
+    { name = "portal", specifier = ">=3.5.0" },
+    { name = "scope", specifier = ">=0.4.4" },
+    { name = "tqdm" },
 ]
 
 [[package]]
@@ -611,6 +665,12 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/49/48/0e32458ab7e02d75f423fe8c2ab10d7fa1aba9b314391d2659e68891912b/jax-0.4.33-py3-none-any.whl", hash = "sha256:5f33e30b49060ebc990b1f8d75f89d15b9fec263f6fff34ef1af1d01996d314f", size = 2097870, upload-time = "2024-09-16T18:38:45.954Z" },
 ]
 
+[package.optional-dependencies]
+cuda12 = [
+    { name = "jax-cuda12-plugin", extra = ["with-cuda"] },
+    { name = "jaxlib" },
+]
+
 [[package]]
 name = "jax-cuda12-pjrt"
 version = "0.4.33"
@@ -630,6 +690,20 @@ dependencies = [
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8c/77/c38bbe531853124b01f9f7a4730117e97b9ec92b55b70f326bf8453664e6/jax_cuda12_plugin-0.4.33-cp311-cp311-manylinux2014_aarch64.whl", hash = "sha256:bb81b2f65b1bb8e65b966b6f79985d3b168d495628b694fdf1791cd89696694e", size = 14851056, upload-time = "2024-09-25T20:01:53.93Z" },
     { url = "https://files.pythonhosted.org/packages/36/6a/14b199d8a3e4de1fe5ba7338e9f0864ca06838b7b442fb3cd13f1becc450/jax_cuda12_plugin-0.4.33-cp311-cp311-manylinux2014_x86_64.whl", hash = "sha256:ad8f8863ee8d5e11a867bd71b37e979939cad64d0f74efd52cdb37292517613e", size = 14858153, upload-time = "2024-09-16T18:40:17.439Z" },
+]
+
+[package.optional-dependencies]
+with-cuda = [
+    { name = "nvidia-cublas-cu12" },
+    { name = "nvidia-cuda-cupti-cu12" },
+    { name = "nvidia-cuda-nvcc-cu12" },
+    { name = "nvidia-cuda-runtime-cu12" },
+    { name = "nvidia-cudnn-cu12" },
+    { name = "nvidia-cufft-cu12" },
+    { name = "nvidia-cusolver-cu12" },
+    { name = "nvidia-cusparse-cu12" },
+    { name = "nvidia-nccl-cu12" },
+    { name = "nvidia-nvjitlink-cu12" },
 ]
 
 [[package]]
@@ -1394,6 +1468,7 @@ dependencies = [
     { name = "cryptography" },
     { name = "cycler" },
     { name = "decorator" },
+    { name = "dreamer" },
     { name = "einops" },
     { name = "elements" },
     { name = "executing" },
@@ -1506,6 +1581,7 @@ requires-dist = [
     { name = "cryptography", specifier = "==50.0.0" },
     { name = "cycler", specifier = "==0.12.1" },
     { name = "decorator", specifier = "==5.3.1" },
+    { name = "dreamer", directory = "vendor/dreamerv3" },
     { name = "einops", specifier = "==0.8.2" },
     { name = "elements", specifier = "==3.22.0" },
     { name = "executing", specifier = "==2.2.1" },
