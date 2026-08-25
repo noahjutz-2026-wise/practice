@@ -1,0 +1,15 @@
+[workspace]
+authors = ["Noah Jutz <git@noahjutz.anonaddy.com>"]
+channels = ["conda-forge"]
+name = "hello_dreamerv3"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+dreamer = "pixi run python -m dreamerv3.main"
+
+[dependencies]
+python = "3.11.*"
+
+[pypi-dependencies]
+dreamer = { git = "https://github.com/noahjutz/dreamerv3.git", rev = "9e1b981518402a78cbdb37c1142150a9349f7480" }

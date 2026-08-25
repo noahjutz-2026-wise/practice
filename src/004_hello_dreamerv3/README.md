@@ -1,5 +1,11 @@
 # Hello Dreamerv3
 
+## Getting started
+
+```bash
+pixi run dreamer
+```
+
 ## Methodology
 
 - _Installation_
