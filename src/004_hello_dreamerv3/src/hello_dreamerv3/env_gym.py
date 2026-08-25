@@ -10,6 +10,8 @@ class MyGymEnv(gym.Env[np.ndarray, int]):
         self.observation_space = gym.spaces.Box(low=0, high=200)
         self.action_space = gym.spaces.Discrete(11)
 
+        self.render_mode = "rgb_array"
+
         self._state: int = 0
 
     @override

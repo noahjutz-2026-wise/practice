@@ -13,6 +13,7 @@
 import functools
 from typing import Any, Dict, Generic, TypeVar, Union, cast
 
+import elements
 import embodied
 import gymnasium
 import numpy as np
@@ -36,7 +37,7 @@ class FromGymnasium(embodied.Env, Generic[U, V]):
         else:
             assert not kwargs, kwargs
             assert env.render_mode == "rgb_array", (
-                f"render_mode must be rgb_array, got {self._env.render_mode}"
+                f"render_mode must be rgb_array, got {env.render_mode}"
             )
             self._env = env
         self._obs_dict = hasattr(self._env.observation_space, "spaces")
@@ -62,10 +63,10 @@ class FromGymnasium(embodied.Env, Generic[U, V]):
         spaces = {k: self._convert(v) for k, v in spaces.items()}
         return {
             **spaces,
-            "reward": embodied.Space(np.float32),
-            "is_first": embodied.Space(bool),
-            "is_last": embodied.Space(bool),
-            "is_terminal": embodied.Space(bool),
+            "reward": elements.Space(np.float32),
+            "is_first": elements.Space(bool),
+            "is_last": elements.Space(bool),
+            "is_terminal": elements.Space(bool),
         }
 
     @functools.cached_property
@@ -76,7 +77,7 @@ class FromGymnasium(embodied.Env, Generic[U, V]):
         else:
             spaces = {self._act_key: self._env.action_space}
         spaces = {k: self._convert(v) for k, v in spaces.items()}
-        spaces["reset"] = embodied.Space(bool)
+        spaces["reset"] = elements.Space(bool)
         return spaces
 
     def step(self, action):
@@ -151,5 +152,5 @@ class FromGymnasium(embodied.Env, Generic[U, V]):
 
     def _convert(self, space):
         if hasattr(space, "n"):
-            return embodied.Space(np.int32, (), 0, space.n)
-        return embodied.Space(space.dtype, space.shape, space.low, space.high)
+            return elements.Space(np.int32, (), 0, space.n)
+        return elements.Space(space.dtype, space.shape, space.low, space.high)
