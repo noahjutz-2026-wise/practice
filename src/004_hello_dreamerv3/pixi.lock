@@ -50,7 +50,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/6b/72/a1116d683a6d7ece94590013882515de087edf9ef0e6292aae615a44df73/cryptography-50.0.0-cp311-abi3-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/e7/05/c19819d5e3d95294a6f5947fb9b9629efb316b96de511b418c53d245aae6/cycler-0.12.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/05/7f/798705f5296a58ca505d600456748d1be48078eac8a7050d8a98bc9edb89/decorator-5.3.1-py3-none-any.whl
-      - pypi: git+https://github.com/noahjutz/dreamerv3.git?rev=9e1b981518402a78cbdb37c1142150a9349f7480#9e1b981518402a78cbdb37c1142150a9349f7480
+      - pypi: git+https://github.com/noahjutz/dreamerv3.git?rev=9ad0d98934a19f0b7ff7b2c622598285895d6534#9ad0d98934a19f0b7ff7b2c622598285895d6534
       - pypi: https://files.pythonhosted.org/packages/2a/09/f8d8f8f31e4483c10a906437b4ce31bdf3d6d417b73fe33f1a8b59e34228/einops-0.8.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/47/3a/6c8b7842b59b24d7cee19b9ee23d8db5fb9ff3e1ba9c4ca4ca3477122260/elements-3.22.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c1/ea/53f2148663b321f21b5a606bd5f191517cf40b7072c0497d3c92c4a13b1e/executing-2.2.1-py2.py3-none-any.whl
@@ -349,7 +349,7 @@ packages:
   version: 5.3.1
   sha256: f47fe6fdbd2edd623ecfe36875d37aba411624e2670dd395dddae1358689bb3c
   requires_python: '>=3.8'
-- pypi: git+https://github.com/noahjutz/dreamerv3.git?rev=9e1b981518402a78cbdb37c1142150a9349f7480#9e1b981518402a78cbdb37c1142150a9349f7480
+- pypi: git+https://github.com/noahjutz/dreamerv3.git?rev=9ad0d98934a19f0b7ff7b2c622598285895d6534#9ad0d98934a19f0b7ff7b2c622598285895d6534
   name: dreamer
   version: 3.3.1
   requires_dist:
@@ -366,7 +366,7 @@ packages:
   - jax[cuda12]==0.4.33
   - jaxtyping
   - ninjax>=3.5.1
-  - numpy<2
+  - numpy
   - nvidia-cuda-nvcc-cu12<=12.2
   - optax
   - portal>=3.5.0

@@ -13,4 +13,4 @@ wrapper = "PYTHONPATH=src pixi run python -m hello_dreamerv3.main"
 python = "3.11.*"
 
 [pypi-dependencies]
-dreamer = { git = "https://github.com/noahjutz/dreamerv3.git", rev = "9e1b981518402a78cbdb37c1142150a9349f7480" }
+dreamer = { git = "https://github.com/noahjutz/dreamerv3.git", rev = "9ad0d98934a19f0b7ff7b2c622598285895d6534" }
