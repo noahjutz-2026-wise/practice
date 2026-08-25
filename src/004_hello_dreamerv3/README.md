@@ -3,7 +3,7 @@
 ## Getting started
 
 ```bash
-pixi run dreamer
+pixi run wrapper --configs simple_env --jax.platform cpu
 ```
 
 ## Methodology
