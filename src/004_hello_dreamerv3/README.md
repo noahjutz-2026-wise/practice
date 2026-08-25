@@ -12,21 +12,21 @@ Wrapper around Dreamerv3 that allows for quick configuration without modifying s
 2. Invoke the wrapper
 
 ```bash
-uv run dreamer --env env.py --configs configs.yaml -- --jax.platform cpu
+uv run dreamer --env env.py --configs configs.yaml
 ```
-
-Extra dreamerv3 flags (like `--jax.platform`) are passed after `--`.
 
 3. In your environment, create a portal client and listen to steps.
 
 ```py
-import portal
+def client():
+  import portal
+  client = portal.Client('localhost:2222')
+  while True:
+      step = client.recv()
 
 client = portal.Client('localhost:2222')
-client.connect()
-while True:
-    action = client.step(obs).result()
-    obs = compute_obs(action)
+client_proc = portal.Process(client, start=True)
+client_proc.join()
 ```
 
 ## Methodology
