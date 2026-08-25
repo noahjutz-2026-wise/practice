@@ -7,6 +7,7 @@ version = "0.1.0"
 
 [tasks]
 dreamer = "pixi run python -m dreamerv3.main"
+wrapper = "PYTHONPATH=src pixi run python -m hello_dreamerv3.main"
 
 [dependencies]
 python = "3.11.*"
