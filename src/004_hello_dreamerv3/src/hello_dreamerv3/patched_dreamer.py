@@ -7,10 +7,12 @@ import elements
 import yaml
 
 from hello_dreamerv3.env import MyEnv
+from hello_dreamerv3.env_gym import MyGymEnv
+from hello_dreamerv3.from_gymnasium import FromGymnasium
 
 
 def custom_make_env(cfg, idx, **ow):
-    return dreamerv3.main.wrap_env(MyEnv(), cfg)
+    return dreamerv3.main.wrap_env(FromGymnasium(env=MyGymEnv()), cfg)
 
 
 dreamerv3.main.make_env = custom_make_env
