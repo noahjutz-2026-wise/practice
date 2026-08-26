@@ -51,7 +51,7 @@ for episode in itertools.count():
         # prediction
         if N[tuple(o_b)] == 1:
             v = q[tuple(o_b)]
-            q[tuple(o_b)] = (1 / N[tuple(o_b)]) * v + (v - G)
+            q[tuple(o_b)] += (1 / N[tuple(o_b)]) * (G - v)
 
         if truncated or terminated:
             break
