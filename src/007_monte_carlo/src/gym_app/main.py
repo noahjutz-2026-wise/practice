@@ -1,6 +1,8 @@
 import gymnasium as gym
 import numpy as np
 
+from . import control
+
 env = gym.make("CartPole-v1", render_mode="human")
 
 q = np.zeros(shape=(100, 100, 100, 100), dtype=np.uint8)
@@ -18,9 +20,8 @@ observation, info = env.reset()
 total_reward = 0
 
 while True:
-    action = env.action_space.sample()
+    action = control.action(env, None)
     observation, reward, terminated, truncated, info = env.step(action)
-    print(observation)
     total_reward += reward
     if truncated or terminated:
         break
