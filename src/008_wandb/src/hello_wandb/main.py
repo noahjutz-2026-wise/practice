@@ -1,10 +1,40 @@
+import numpy as np
+
 import wandb
 
-project = "my-awesome-proj"
+with wandb.init(
+    entity="tjno",
+    project="hello_wandb",
+    config={
+        "learning_rate": 0.02,
+        "replay_size": 5e6,
+        "replay_chunksize": 1024,
+        "architecture": "CNN",
+        "seed": 102,
+    },
+) as run:
+    run.define_metric("step")
+    run.define_metric("episode")
 
-with wandb.init(project=project) as run:
-    for i in range(1000):
-        run.log({"accuracy": i, "loss": -float(i) / 10})
+    # Associate metrics with their respective x-axis
+    run.define_metric("step/reward", step_metric="step")
+    run.define_metric("episode/total_reward", step_metric="episode")
+
+    global_step = 0
+    for episode in range(10):
+        total_reward = 0
+
+        # Per-step loop
+        for env_step in range(100):
+            reward = 1.0  # Example reward
+            total_reward += reward
+
+            # Log per-step metrics
+            run.log({"step": global_step, "step/reward": reward})
+            global_step += 1
+
+        # Log per-episode metrics
+        run.log({"episode": episode, "episode/total_reward": total_reward})
 
 
 def main():
