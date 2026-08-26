@@ -7,7 +7,9 @@ from numpy.typing import NDArray
 
 from . import control, prediction, viz
 
-plt.ion()
+fig, ax = plt.subplots()
+(ln,) = ax.plot([], [])
+plt.show(block=False)
 
 env = gym.make("CartPole-v1", render_mode=None)
 
@@ -34,7 +36,7 @@ def resolve(bin: NDArray[np.uint8]):
     return bins[np.arange(4), bin]
 
 
-for episode in range(100):
+for episode in itertools.count():
     visited.fill(False)
     observation, info = env.reset()
     o_b = bin(observation)
@@ -55,13 +57,15 @@ for episode in range(100):
             break
 
     print(episode)
-    plt.plot(viz.value_by_angle(q))
+    y = viz.value_by_angle(q)
+    x = np.arange(len(y))
+    ln.set_data(x, y)
+    ax.relim()
+    ax.autoscale_view()
+    plt.pause(0.01)
 
 
 env.close()
-
-plt.ioff()
-plt.show()
 
 
 def main():
