@@ -8,7 +8,8 @@ from . import control, prediction
 
 env = gym.make("CartPole-v1", render_mode="human")
 
-q = np.zeros(shape=(100, 100, 100, 100), dtype=np.uint8)
+q = np.zeros(shape=(100,) * 4, dtype=np.uint8)
+visited = np.zeros(shape=(100,) * 4, dtype=np.bool)
 
 bins = np.vstack(
     (
@@ -30,7 +31,8 @@ def resolve(bin: NDArray[np.uint8]):
     return bins[np.arange(4), bin]
 
 
-for episode in range(1000):
+for episode in range(100):
+    visited.fill(False)
     observation, info = env.reset()
     o_b = bin(observation)
     total_reward = 0
@@ -38,6 +40,12 @@ for episode in range(1000):
         action = control.action(env, resolve(o_b))
         observation, reward, terminated, truncated, info = env.step(action)
         o_b = bin(observation)
+
+        # prediction
+        if not visited[tuple(o_b)]:
+            visited[tuple(o_b)] = True
+            q[tuple(o_b)] = gamma * q[tuple(o_b)] + reward
+
         total_reward += reward
         if truncated or terminated:
             break
