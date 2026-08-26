@@ -1,12 +1,15 @@
 import itertools
 
 import gymnasium as gym
+import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
 
-from . import control, prediction
+from . import control, prediction, viz
 
-env = gym.make("CartPole-v1", render_mode="human")
+plt.ion()
+
+env = gym.make("CartPole-v1", render_mode=None)
 
 q = np.zeros(shape=(100,) * 4, dtype=np.uint8)
 visited = np.zeros(shape=(100,) * 4, dtype=np.bool)
@@ -35,27 +38,30 @@ for episode in range(100):
     visited.fill(False)
     observation, info = env.reset()
     o_b = bin(observation)
-    total_reward = 0
+    G = 0
     for step in itertools.count():
         action = control.action(env, resolve(o_b))
         observation, reward, terminated, truncated, info = env.step(action)
         o_b = bin(observation)
+        G = G * gamma + reward
 
         # prediction
         if not visited[tuple(o_b)]:
             visited[tuple(o_b)] = True
-            q[tuple(o_b)] = gamma * q[tuple(o_b)] + reward
+            v = q[tuple(o_b)]
+            q[tuple(o_b)] = (1 / (episode + 1)) * v + (v - G)
 
-        total_reward += reward
         if truncated or terminated:
             break
 
-    prediction.evaluate(q, ...)
+    print(episode)
+    plt.plot(viz.value_by_angle(q))
 
 
 env.close()
 
-print(total_reward)
+plt.ioff()
+plt.show()
 
 
 def main():
