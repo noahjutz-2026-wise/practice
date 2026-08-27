@@ -7,6 +7,11 @@ from numpy.typing import NDArray
 
 from . import control, estimation, viz
 
+config = {"n_bins": (15, 15, 15, 15), "gamma": 0.9, "epsilon": 0.01}
+n_bins = config["n_bins"]
+gamma = config["gamma"]
+epsilon = config["epsilon"]
+
 fig, ax = plt.subplots()
 (ln0,) = ax.plot([], [], label="action 0 (left)")
 (ln1,) = ax.plot([], [], label="action 1 (right)")
@@ -15,23 +20,20 @@ plt.show(block=False)
 
 env = gym.make("CartPole-v1", render_mode=None)
 
-n_bins = 10
 
-Q = np.zeros(shape=(n_bins,) * 4 + (2,), dtype=np.float64)
+Q = np.zeros(shape=n_bins + (2,), dtype=np.float64)
 M = np.zeros(
-    shape=(n_bins,) * 4 + (2,), dtype=np.uint32
+    shape=n_bins + (2,), dtype=np.uint32
 )  # Monte Carlo incremental Average (+ 1/M * error)
 
 bins = np.vstack(
     (
-        np.linspace(-4.8, 4.8, num=n_bins),
-        np.linspace(-5, 5, num=n_bins),
-        np.linspace(-0.418, 0.418, num=n_bins),
-        np.linspace(-5, 5, num=n_bins),
+        np.linspace(-4.8, 4.8, num=n_bins[0]),
+        np.linspace(-5, 5, num=n_bins[1]),
+        np.linspace(-0.418, 0.418, num=n_bins[2]),
+        np.linspace(-5, 5, num=n_bins[3]),
     )
 )
-
-gamma = 0.9
 
 
 def bin(observation: NDArray[np.float64]) -> NDArray[np.uint8]:
@@ -52,7 +54,7 @@ for episode in itertools.count():
     o_b = bin(observation)
     for step in itertools.count():
         states.append(o_b)
-        action = control.action(env, o_b, Q)
+        action = control.action(env, o_b, Q, epsilon)
         observation, reward, terminated, truncated, info = env.step(action)
         o_b = bin(observation)
 
