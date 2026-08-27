@@ -1,10 +1,4 @@
-import numpy as np
 from numpy.typing import NDArray
-
-"""
-First-Visit MC prediction
-Given one episode
-"""
 
 
 def monte_carlo(
@@ -15,6 +9,9 @@ def monte_carlo(
     M: NDArray,
     Q: NDArray,
 ) -> tuple[NDArray, NDArray]:
+    """
+    First-Visit MC prediction, given one episode
+    """
     T = len(rewards)
     # Build set of first-visit timesteps: for each (state, action) pair,
     # only the earliest timestep counts.
