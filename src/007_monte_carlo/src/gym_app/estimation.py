@@ -15,13 +15,22 @@ def monte_carlo(
     M: NDArray,
     Q: NDArray,
 ) -> tuple[NDArray, NDArray]:
-    G = 0
-    for t in range(len(rewards) - 1, -1, -1):
+    T = len(rewards)
+    # Build set of first-visit timesteps: for each (state, action) pair,
+    # only the earliest timestep counts.
+    first_visit: dict[tuple, int] = {}
+    for t in range(T):
+        key = (*states[t], actions[t])
+        if key not in first_visit:
+            first_visit[key] = t
+
+    # Backward pass to compute returns
+    G = 0.0
+    for t in range(T - 1, -1, -1):
         G = gamma * G + rewards[t]
-        state_mask = (states[t] == states[:t]).all(axis=1)
-        action_mask = actions[t] == actions[:t]
-        if not (state_mask & action_mask).any():
-            idx = tuple(states[t]) + (actions[t],)
+        key = (*states[t], actions[t])
+        if first_visit[key] == t:
+            idx = tuple(key)
             M[idx] += 1
-            Q[idx] += 1 / M[idx] * (G - Q[idx])
+            Q[idx] += (G - Q[idx]) / M[idx]
     return M, Q

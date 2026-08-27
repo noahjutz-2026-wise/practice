@@ -27,27 +27,26 @@ M = np.zeros(
     shape=n_bins + (2,), dtype=np.uint32
 )  # Monte Carlo incremental Average (+ 1/M * error)
 
-bins = np.vstack(
-    (
-        np.linspace(-4.8, 4.8, num=n_bins[0]),
-        np.linspace(-5, 5, num=n_bins[1]),
-        np.linspace(-0.418, 0.418, num=n_bins[2]),
-        np.linspace(-5, 5, num=n_bins[3]),
+bin_lo = np.array([-4.8, -5.0, -0.418, -5.0])
+bin_hi = np.array([4.8, 5.0, 0.418, 5.0])
+n_bins_arr = np.array(n_bins, dtype=np.float64)
+bin_step = (bin_hi - bin_lo) / (n_bins_arr - 1)
+bin_max = np.array(n_bins, dtype=np.int64)  # max index = n_bins (one past last edge)
+
+
+def bin(observation: NDArray[np.float64]) -> NDArray[np.int64]:
+    return np.clip(
+        ((observation - bin_lo) / bin_step + 0.5).astype(np.int64), 0, bin_max
     )
-)
 
 
-def bin(observation: NDArray[np.float64]) -> NDArray[np.uint8]:
-    return (observation[:, None] >= bins).sum(axis=1)
-
-
-def resolve(bin: NDArray[np.uint8]) -> NDArray[np.float64]:
-    return bins[np.arange(4), bin]  # todo out of bounds exception
+def resolve(b: NDArray[np.int64]) -> NDArray[np.float64]:
+    return bin_lo + b * bin_step
 
 
 p = pyinstrument.Profiler()
 p.start()
-for episode in range(1000):
+for episode in range(10000):
     if episode == 50000:
         env = gym.make("CartPole-v1", render_mode="human")
     rewards = []
@@ -57,7 +56,7 @@ for episode in range(1000):
     o_b = bin(observation)
     for step in itertools.count():
         states.append(o_b)
-        action = control.action(env, o_b, Q, epsilon)
+        action = control.action(o_b, Q, epsilon)
         observation, reward, terminated, truncated, info = env.step(action)
         o_b = bin(observation)
 
