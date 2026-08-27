@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
 
-from . import control, prediction, viz
+from . import control, estimation, viz
 
 fig, ax = plt.subplots()
 (ln,) = ax.plot([], [])
@@ -57,7 +57,7 @@ for episode in itertools.count():
 
     rewards = np.array(rewards)
     states = np.array(states)
-    M, V = prediction.monte_carlo(rewards, states, gamma, M, V)
+    M, V = estimation.monte_carlo(rewards, states, gamma, M, V)
 
     print(f"ep {episode}")
     if episode % 1000 == 0:
