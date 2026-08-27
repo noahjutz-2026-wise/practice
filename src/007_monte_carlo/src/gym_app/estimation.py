@@ -28,12 +28,12 @@ def isr(
         elif p_pi == 0:  # a!=a*
             return p_e
 
-    def ratio(i):
-        a = actions[i]
-        s = tuple(states[i])
+    def ratio(t):
+        a = actions[t]
+        s = tuple(states[t])
         return pi(a, s) / b(a, s)
 
-    rho = np.fromfunction(ratio, (T_1 - t,))
+    rho = np.fromfunction(lambda i: ratio(i + t), (T_1 - t,), dtype=np.uint32)
     return np.prod(rho)
 
 
