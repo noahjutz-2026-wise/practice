@@ -63,10 +63,21 @@ def train(run: wandb.Run) -> NDArray:
         states = np.array(states)
         rewards = np.array(rewards)
         actions = np.array(actions)
+        if episode % log_every == 0:
+            last_Q = Q.copy()
         M, Q = estimation.monte_carlo(rewards, states, actions, gamma, M, Q)
 
         if episode % log_every == 0:
-            run.log({"episode": episode, "cum_reward": rewards.sum()})
+            run.log(
+                {
+                    "episode": episode,
+                    "cum_reward": rewards.sum(),
+                    "steps": step + 1,
+                    "q_coverage": (M > 0).sum(),
+                    "q_value": Q[M > 0].mean(),
+                    "stability": np.count_nonzero(Q != last_Q),
+                }
+            )
 
     env.close()
 
