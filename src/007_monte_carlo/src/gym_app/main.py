@@ -13,7 +13,7 @@ fig, ax = plt.subplots()
 ax.legend()
 plt.show(block=False)
 
-env = gym.make("CartPole-v1", render_mode="human")
+env = gym.make("CartPole-v1", render_mode=None)
 
 Q = np.zeros(shape=(100,) * 4 + (2,), dtype=np.float64)
 M = np.zeros(
@@ -41,6 +41,8 @@ def resolve(bin: NDArray[np.uint8]) -> NDArray[np.float64]:
 
 
 for episode in itertools.count():
+    if episode == 2000:
+        env = gym.make("CartPole-v1", render_mode="human")
     rewards = []
     states = []
     actions = []
