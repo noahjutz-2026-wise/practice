@@ -13,10 +13,9 @@ plt.show(block=False)
 
 env = gym.make("CartPole-v1", render_mode=None)
 
-V = np.zeros(shape=(100,) * 4, dtype=np.float64)
-N = np.zeros(shape=(100,) * 4, dtype=np.uint32)
+Q = np.zeros(shape=(100,) * 4 + (2,), dtype=np.float64)
 M = np.zeros(
-    shape=(100,) * 4, dtype=np.uint32
+    shape=(100,) * 4 + (2,), dtype=np.uint32
 )  # Monte Carlo incremental Average (+ 1/M * error)
 
 bins = np.vstack(
@@ -42,26 +41,29 @@ def resolve(bin: NDArray[np.uint8]) -> NDArray[np.float64]:
 for episode in itertools.count():
     rewards = []
     states = []
+    actions = []
     observation, info = env.reset()
     o_b = bin(observation)
     for step in itertools.count():
         states.append(o_b)
-        action = control.action(env, resolve(o_b))
+        action = control.action(env, o_b, Q)
         observation, reward, terminated, truncated, info = env.step(action)
         o_b = bin(observation)
 
         rewards.append(reward)
+        actions.append(action)
 
         if truncated or terminated:
             break
 
-    rewards = np.array(rewards)
     states = np.array(states)
-    M, V = estimation.monte_carlo(rewards, states, gamma, M, V)
+    rewards = np.array(rewards)
+    actions = np.array(actions)
+    M, V = estimation.monte_carlo(rewards, states, actions, gamma, M, Q)
 
     print(f"ep {episode}")
     if episode % 1000 == 0:
-        y = viz.value_by_angle(V, M)
+        y = viz.value_by_angle(Q, M)
         x = np.arange(len(y))
         ln.set_data(x, y)
         ax.relim()
