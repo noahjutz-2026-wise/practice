@@ -10,4 +10,4 @@ def action(env: gym.Env, state, Q: NDArray, epsilon: float):
     action_values = Q[tuple(state)]
     max_val = np.max(action_values)
     best_a = np.flatnonzero(action_values == max_val)
-    return env.np_random.choice(best_a)
+    return best_a[env.np_random.integers(len(best_a))]

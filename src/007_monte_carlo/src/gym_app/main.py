@@ -47,7 +47,7 @@ def resolve(bin: NDArray[np.uint8]) -> NDArray[np.float64]:
 
 p = pyinstrument.Profiler()
 p.start()
-for episode in range(5000):
+for episode in range(1000):
     if episode == 50000:
         env = gym.make("CartPole-v1", render_mode="human")
     rewards = []
