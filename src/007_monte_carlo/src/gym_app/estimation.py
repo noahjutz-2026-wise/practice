@@ -1,4 +1,40 @@
+import numpy as np
 from numpy.typing import NDArray
+
+
+def isr(
+    epsilon: float, Q: NDArray, actions: NDArray, states: NDArray, t: int, T_1: int
+) -> float:
+    """
+    Importance-Sampling Ratio (Ordinary Importance Sampling) for
+    - an epsilon-greedy behavior policy b
+    - a greedy target policy pi
+    with the same state-action values Q. Given an episode with actions, states.
+    """
+
+    A = 2  # amount of actions A(s)
+
+    # Target Policy (greedy)
+    def pi(a: int, s: tuple[int, int, int, int]):
+        return a == np.argmax(Q[s], axis=-1)
+
+    # Behavior-policy (epsilon-greedy)
+    def b(a: int, s: tuple[int, int, int, int]):
+        p_e = epsilon / A  # explore
+        p_g = 1 - epsilon  # exploit
+        p_pi = pi(a, s)
+        if p_pi == 1:  # a=a*
+            return p_g + p_e
+        elif p_pi == 0:  # a!=a*
+            return p_e
+
+    def ratio(i):
+        a = actions[i]
+        s = tuple(states[i])
+        return pi(a, s) / b(a, s)
+
+    rho = np.fromfunction(ratio, (T_1 - t,))
+    return np.prod(rho)
 
 
 def monte_carlo(
