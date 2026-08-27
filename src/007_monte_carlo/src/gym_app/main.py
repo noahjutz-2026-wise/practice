@@ -13,7 +13,7 @@ fig, ax = plt.subplots()
 ax.legend()
 plt.show(block=False)
 
-env = gym.make("CartPole-v1", render_mode=None)
+env = gym.make("CartPole-v1", render_mode="human")
 
 Q = np.zeros(shape=(100,) * 4 + (2,), dtype=np.float64)
 M = np.zeros(
