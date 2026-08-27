@@ -13,7 +13,9 @@ def main():
         "log_every": 100,
     }
 
-    with wandb.init(entity="tjno", project="monte_carlo", config=config) as run:
+    with wandb.init(
+        entity="tjno", project="monte_carlo", config=config, mode="disabled"
+    ) as run:
         run.define_metric("episode")
         run.define_metric("cum_reward", step_metric="episode", summary="max")
         run.define_metric("steps", step_metric="episode", summary="max")
