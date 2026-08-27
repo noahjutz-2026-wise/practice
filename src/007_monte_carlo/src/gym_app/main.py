@@ -13,12 +13,16 @@ def main():
         "log_every": 100,
     }
 
-    with wandb.init(entity="tjno", project="monte_carlo", config=config) as run:
-        run.define_metric("episode")
-        run.define_metric("cum_reward", step_metric="episode", summary="max")
-        run.define_metric("steps", step_metric="episode", summary="max")
-        run.define_metric("q_coverage", step_metric="episode", summary="max")
-        run.define_metric("q_value", step_metric="episode", summary="mean")
-        run.define_metric("stability", step_metric="episode")
+    for r in range(100):
+        print(f"run {r}")
+        with wandb.init(
+            entity="tjno", project="monte_carlo", group="batch_1", config=config
+        ) as run:
+            run.define_metric("episode")
+            run.define_metric("cum_reward", step_metric="episode", summary="max")
+            run.define_metric("steps", step_metric="episode", summary="max")
+            run.define_metric("q_coverage", step_metric="episode", summary="max")
+            run.define_metric("q_value", step_metric="episode", summary="mean")
+            run.define_metric("stability", step_metric="episode")
 
-        Q = train.train(run)
+            Q = train.train(run)
