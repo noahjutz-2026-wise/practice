@@ -45,12 +45,12 @@ for episode in itertools.count():
     observation, info = env.reset()
     o_b = bin(observation)
     for step in itertools.count():
+        states.append(o_b)
         action = control.action(env, resolve(o_b))
         observation, reward, terminated, truncated, info = env.step(action)
         o_b = bin(observation)
 
         rewards.append(reward)
-        states.append(o_b)
 
         if truncated or terminated:
             break
@@ -60,12 +60,13 @@ for episode in itertools.count():
     M, V = prediction.monte_carlo(rewards, states, gamma, M, V)
 
     print(f"ep {episode}")
-    y = viz.value_by_angle(V)
-    x = np.arange(len(y))
-    ln.set_data(x, y)
-    ax.relim()
-    ax.autoscale_view()
-    plt.pause(0.01)
+    if episode % 1000 == 0:
+        y = viz.value_by_angle(V, M)
+        x = np.arange(len(y))
+        ln.set_data(x, y)
+        ax.relim()
+        ax.autoscale_view()
+        plt.pause(0.01)
 
 
 env.close()
