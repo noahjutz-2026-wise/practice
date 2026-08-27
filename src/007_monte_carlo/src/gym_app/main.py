@@ -8,7 +8,9 @@ from numpy.typing import NDArray
 from . import control, estimation, viz
 
 fig, ax = plt.subplots()
-(ln,) = ax.plot([], [])
+(ln0,) = ax.plot([], [], label="action 0 (left)")
+(ln1,) = ax.plot([], [], label="action 1 (right)")
+ax.legend()
 plt.show(block=False)
 
 env = gym.make("CartPole-v1", render_mode=None)
@@ -64,8 +66,9 @@ for episode in itertools.count():
     print(f"ep {episode}")
     if episode % 1000 == 0:
         y = viz.value_by_angle(Q, M)
-        x = np.arange(len(y))
-        ln.set_data(x, y)
+        x = np.arange(y.shape[0])
+        ln0.set_data(x, y[:, 0])
+        ln1.set_data(x, y[:, 1])
         ax.relim()
         ax.autoscale_view()
         plt.pause(0.01)
