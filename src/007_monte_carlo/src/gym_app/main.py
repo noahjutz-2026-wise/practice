@@ -37,7 +37,7 @@ def resolve(bin: NDArray[np.uint8]) -> NDArray[np.float64]:
 
 
 for episode in itertools.count():
-    N.fill(False)
+    N.fill(0)
     observation, info = env.reset()
     o_b = bin(observation)
     G = 0
@@ -56,7 +56,7 @@ for episode in itertools.count():
         if truncated or terminated:
             break
 
-    print(episode)
+    print(f"ep {episode} G {G}")
     y = viz.value_by_angle(q)
     x = np.arange(len(y))
     ln.set_data(x, y)
