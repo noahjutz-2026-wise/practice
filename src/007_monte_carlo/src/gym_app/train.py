@@ -7,20 +7,15 @@ from numpy.typing import NDArray
 
 import wandb
 
-from . import control, estimation, viz
+from . import control, estimation
 
 
-def train(run: wandb.Run):
-    n_bins = run.config["n_bins"]
+def train(run: wandb.Run) -> NDArray:
+    n_bins = tuple(run.config["n_bins"])
     gamma = run.config["gamma"]
     epsilon = run.config["epsilon"]
     episodes = run.config["episodes"]
-
-    fig, ax = plt.subplots()
-    (ln0,) = ax.plot([], [], label="action 0 (left)")
-    (ln1,) = ax.plot([], [], label="action 1 (right)")
-    ax.legend()
-    plt.show(block=False)
+    log_every = run.config["log_every"]
 
     env = gym.make("CartPole-v1", render_mode=None)
 
@@ -70,18 +65,9 @@ def train(run: wandb.Run):
         actions = np.array(actions)
         M, Q = estimation.monte_carlo(rewards, states, actions, gamma, M, Q)
 
-        if episode % 1000 == 0:
-            print(f"ep {episode}")
-        if episode % 20000 == 0:
-            y = viz.value_by_angle(Q, M)
-            x = np.arange(y.shape[0])
-            ln0.set_data(x, y[:, 0])
-            ln1.set_data(x, y[:, 1])
-            ax.relim()
-            ax.autoscale_view()
-            plt.pause(0.01)
+        if episode % log_every == 0:
+            run.log({"episode": episode, "cum_reward": rewards.sum()})
 
     env.close()
 
-    def main():
-        pass
+    return Q
