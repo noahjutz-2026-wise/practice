@@ -15,17 +15,19 @@ plt.show(block=False)
 
 env = gym.make("CartPole-v1", render_mode=None)
 
-Q = np.zeros(shape=(100,) * 4 + (2,), dtype=np.float64)
+n_bins = 10
+
+Q = np.zeros(shape=(n_bins,) * 4 + (2,), dtype=np.float64)
 M = np.zeros(
-    shape=(100,) * 4 + (2,), dtype=np.uint32
+    shape=(n_bins,) * 4 + (2,), dtype=np.uint32
 )  # Monte Carlo incremental Average (+ 1/M * error)
 
 bins = np.vstack(
     (
-        np.linspace(-4.8, 4.8, num=100),
-        np.linspace(-5, 5, num=100),
-        np.linspace(-0.418, 0.418, num=100),
-        np.linspace(-5, 5, num=100),
+        np.linspace(-4.8, 4.8, num=n_bins),
+        np.linspace(-5, 5, num=n_bins),
+        np.linspace(-0.418, 0.418, num=n_bins),
+        np.linspace(-5, 5, num=n_bins),
     )
 )
 
@@ -41,7 +43,7 @@ def resolve(bin: NDArray[np.uint8]) -> NDArray[np.float64]:
 
 
 for episode in itertools.count():
-    if episode == 2000:
+    if episode == 50000:
         env = gym.make("CartPole-v1", render_mode="human")
     rewards = []
     states = []
@@ -65,8 +67,9 @@ for episode in itertools.count():
     actions = np.array(actions)
     M, V = estimation.monte_carlo(rewards, states, actions, gamma, M, Q)
 
-    print(f"ep {episode}")
     if episode % 1000 == 0:
+        print(f"ep {episode}")
+    if episode % 20000 == 0:
         y = viz.value_by_angle(Q, M)
         x = np.arange(y.shape[0])
         ln0.set_data(x, y[:, 0])
