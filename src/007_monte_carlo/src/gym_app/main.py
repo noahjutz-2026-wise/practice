@@ -3,6 +3,7 @@ import itertools
 import gymnasium as gym
 import matplotlib.pyplot as plt
 import numpy as np
+import pyinstrument
 from numpy.typing import NDArray
 
 from . import control, estimation, viz
@@ -44,7 +45,9 @@ def resolve(bin: NDArray[np.uint8]) -> NDArray[np.float64]:
     return bins[np.arange(4), bin]  # todo out of bounds exception
 
 
-for episode in itertools.count():
+p = pyinstrument.Profiler()
+p.start()
+for episode in range(5000):
     if episode == 50000:
         env = gym.make("CartPole-v1", render_mode="human")
     rewards = []
@@ -80,6 +83,9 @@ for episode in itertools.count():
         ax.autoscale_view()
         plt.pause(0.01)
 
+p.stop()
+p.print()
+p.open_in_browser()
 
 env.close()
 
