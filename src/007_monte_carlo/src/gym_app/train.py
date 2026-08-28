@@ -42,9 +42,9 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
     def resolve(b: NDArray[np.int64]) -> NDArray[np.float64]:
         return bin_lo + b * bin_step
 
+    env = gym.make("CartPole-v1", render_mode="human")
     for episode in range(episodes):
         # if episode == episodes - 10:
-        #     env = gym.make("CartPole-v1", render_mode="human")
         rewards = []
         states = []
         actions = []

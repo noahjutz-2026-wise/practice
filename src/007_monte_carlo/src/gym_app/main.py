@@ -10,13 +10,13 @@ mode = "online"
 group = None
 
 
-def experiment_eval(config: wandb.sdk.Config):
+def experiment_eval(config: wandb.sdk.Config, model_name: str | None = None):
     config["task"] = "eval"
     with wandb.init(
         mode=mode, entity=entity, project=project, config=config, group=group
     ) as run:
-        p = run.use_model(name="mc_offpolicy:v0")
-        Q = np.load(p)
+        p = run.use_model(name=model_name)
+        Q = np.load(p)["arr_0"]
         _ = train.train(run, Q)
 
 
@@ -56,4 +56,4 @@ def main():
         "log_every": 100,
     }
 
-    experiment_train(config, model_name="mc_offpolicy")
+    experiment_eval(config, model_name="mc_offpolicy:v0")
