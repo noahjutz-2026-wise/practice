@@ -10,16 +10,18 @@ import wandb
 from . import control, estimation
 
 
-def train(run: wandb.Run) -> NDArray:
+def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
     n_bins = tuple(run.config["n_bins"])
     gamma = run.config["gamma"]
     epsilon = run.config["epsilon"]
     episodes = run.config["episodes"]
     log_every = run.config["log_every"]
+    task = run.config["task"]
 
     env = gym.make("CartPole-v1", render_mode=None)
 
-    Q = np.zeros(shape=n_bins + (2,), dtype=np.float64)
+    if Q is None:
+        Q = np.zeros(shape=n_bins + (2,), dtype=np.float64)
     C = np.zeros(
         shape=n_bins + (2,), dtype=np.float64
     )  # Monte Carlo incremental Average (+ 1/M * error)
@@ -65,7 +67,10 @@ def train(run: wandb.Run) -> NDArray:
         actions = np.array(actions)
         if episode % log_every == 0:
             last_Q = Q.copy()
-        C, Q = estimation.monte_carlo(rewards, states, actions, gamma, epsilon, C, Q)
+        if task == "train":
+            C, Q = estimation.monte_carlo(
+                rewards, states, actions, gamma, epsilon, C, Q
+            )
 
         if episode % log_every == 0:
             run.log(
