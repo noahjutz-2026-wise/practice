@@ -70,11 +70,12 @@ def monte_carlo(
     W = 1
     for t in range(T - 1, -1, -1):
         G = gamma * G + rewards[t]
-        W *= isr(epsilon, Q, actions[t], states[t])
 
         key = (*states[t], actions[t])
         if first_visit[key] == t:
             idx = tuple(key)
             C[idx] += W
             Q[idx] += (W / C[idx]) * (G - Q[idx])
+
+        W *= isr(epsilon, Q, actions[t], states[t])
     return C, Q
