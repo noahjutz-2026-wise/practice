@@ -15,7 +15,8 @@ def main():
 
     n_runs = 50
 
-    for episode in range(n_runs):
+    for r in range(n_runs):
+        print(f"Run {r}")
         with wandb.init(
             mode="disabled",
             entity="tjno",
