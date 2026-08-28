@@ -29,6 +29,8 @@ def isr(epsilon: float, Q: NDArray, action: int, state: NDArray) -> float:
     def ratio():
         a = action
         s = tuple(state)
+        if pi(a, s) == 0:
+            return 0
         return pi(a, s) / b(a, s)
 
     return ratio()
