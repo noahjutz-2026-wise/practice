@@ -9,7 +9,7 @@ def main():
         "n_bins": (15, 15, 15, 15),
         "gamma": 0.9,
         "epsilon": 0.01,
-        "episodes": 2000,
+        "episodes": 1000,
         "log_every": 100,
     }
 

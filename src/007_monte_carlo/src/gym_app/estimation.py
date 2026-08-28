@@ -78,4 +78,6 @@ def monte_carlo(
             Q[idx] += (W / C[idx]) * (G - Q[idx])
 
         W *= isr(epsilon, Q, actions[t], states[t])
+        if W == 0:
+            break
     return C, Q
