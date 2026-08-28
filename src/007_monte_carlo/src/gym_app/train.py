@@ -50,7 +50,7 @@ def train(run: wandb.Run) -> NDArray:
         o_b = bin(observation)
         for step in itertools.count():
             states.append(o_b)
-            action = control.action(o_b, Q, epsilon)
+            action = control.b(o_b, Q, epsilon)
             observation, reward, terminated, truncated, info = env.step(action)
             o_b = bin(observation)
 
