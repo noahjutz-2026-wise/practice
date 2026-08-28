@@ -20,8 +20,8 @@ def train(run: wandb.Run) -> NDArray:
     env = gym.make("CartPole-v1", render_mode=None)
 
     Q = np.zeros(shape=n_bins + (2,), dtype=np.float64)
-    M = np.zeros(
-        shape=n_bins + (2,), dtype=np.uint32
+    C = np.zeros(
+        shape=n_bins + (2,), dtype=np.float64
     )  # Monte Carlo incremental Average (+ 1/M * error)
 
     bin_lo = np.array([-4.8, -5.0, -0.418, -5.0])
@@ -65,7 +65,7 @@ def train(run: wandb.Run) -> NDArray:
         actions = np.array(actions)
         if episode % log_every == 0:
             last_Q = Q.copy()
-        M, Q = estimation.monte_carlo(rewards, states, actions, gamma, M, Q)
+        C, Q = estimation.monte_carlo(rewards, states, actions, gamma, epsilon, C, Q)
 
         if episode % log_every == 0:
             run.log(
@@ -73,8 +73,8 @@ def train(run: wandb.Run) -> NDArray:
                     "episode": episode,
                     "cum_reward": rewards.sum(),
                     "steps": step + 1,
-                    "q_coverage": (M > 0).sum(),
-                    "q_value": Q[M > 0].mean(),
+                    "q_coverage": (C > 0).sum(),
+                    "q_value": Q[C > 0].mean(),
                     "stability": np.count_nonzero(Q != last_Q),
                 }
             )
