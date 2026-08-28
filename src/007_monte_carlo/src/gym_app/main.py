@@ -13,7 +13,7 @@ def main():
         "log_every": 100,
     }
 
-    n_runs = 50
+    n_runs = 10
 
     for r in range(n_runs):
         print(f"Run {r}")

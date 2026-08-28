@@ -41,8 +41,8 @@ def train(run: wandb.Run) -> NDArray:
         return bin_lo + b * bin_step
 
     for episode in range(episodes):
-        if episode == 990:
-            env = gym.make("CartPole-v1", render_mode="human")
+        # if episode == episodes - 10:
+        #     env = gym.make("CartPole-v1", render_mode="human")
         rewards = []
         states = []
         actions = []
