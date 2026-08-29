@@ -45,8 +45,8 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
         actions = []
         observation, info = env.reset()
         action = None
-        for step in itertools.count():
-            new_action = control.b(observation, Q, epsilon)
+        for t in itertools.count():
+            new_action = control.b(observation, Q, 1 / t)
             new_observation, reward, terminated, truncated, info = env.step(action)
 
             match prediction_method:
@@ -86,7 +86,7 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
                 {
                     "episode": episode,
                     "cum_reward": rewards.sum(),
-                    "steps": step + 1,
+                    "steps": t + 1,
                     "q_coverage": (C > 0).sum(),
                     "q_value": Q[C > 0].mean(),
                     "stability": np.count_nonzero(Q != last_Q),
