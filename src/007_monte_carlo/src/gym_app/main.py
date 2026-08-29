@@ -7,7 +7,7 @@ from . import train
 entity = "tjno"
 project = "monte_carlo"
 mode = "online"
-group = None
+group = "tmp"
 
 
 def experiment_eval(config: wandb.sdk.Config, model_name: str | None = None):
@@ -49,11 +49,12 @@ def experiment_train(config: wandb.sdk.Config, model_name: str | None = None):
 
 def main():
     config = {
+        "prediction_method": "monte_carlo",
         "n_bins": (15, 15, 15, 15),
         "gamma": 0.9,
         "epsilon": 0.1,
-        "episodes": 20000,
+        "episodes": 2000,
         "log_every": 100,
     }
 
-    experiment_eval(config, model_name="mc_offpolicy:v0")
+    experiment_train(config)

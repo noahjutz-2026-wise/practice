@@ -6,6 +6,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 import wandb
+from gym_app.env import DiscreteCartPole
 
 from . import control, estimation
 
@@ -17,8 +18,10 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
     episodes = run.config["episodes"]
     log_every = run.config["log_every"]
     task = run.config["task"]
+    prediction_method = run.config["prediction_method"]
 
     env = gym.make("CartPole-v1", render_mode=None)
+    env = DiscreteCartPole(env, n_bins)
 
     if Q is None:
         Q = np.zeros(shape=n_bins + (2,), dtype=np.float64)
@@ -26,35 +29,16 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
         shape=n_bins + (2,), dtype=np.float64
     )  # Monte Carlo incremental Average (+ 1/M * error)
 
-    bin_lo = np.array([-4.8, -5.0, -0.418, -5.0])
-    bin_hi = np.array([4.8, 5.0, 0.418, 5.0])
-    n_bins_arr = np.array(n_bins, dtype=np.float64)
-    bin_step = (bin_hi - bin_lo) / (n_bins_arr - 1)
-    bin_max = np.array(
-        n_bins, dtype=np.int64
-    )  # max index = n_bins (one past last edge)
-
-    def bin(observation: NDArray[np.float64]) -> NDArray[np.int64]:
-        return np.clip(
-            ((observation - bin_lo) / bin_step + 0.5).astype(np.int64), 0, bin_max
-        )
-
-    def resolve(b: NDArray[np.int64]) -> NDArray[np.float64]:
-        return bin_lo + b * bin_step
-
-    env = gym.make("CartPole-v1", render_mode="human")
     for episode in range(episodes):
         # if episode == episodes - 10:
         rewards = []
         states = []
         actions = []
         observation, info = env.reset()
-        o_b = bin(observation)
         for step in itertools.count():
-            states.append(o_b)
-            action = control.b(o_b, Q, epsilon)
+            states.append(observation)
+            action = control.b(observation, Q, epsilon)
             observation, reward, terminated, truncated, info = env.step(action)
-            o_b = bin(observation)
 
             rewards.append(reward)
             actions.append(action)

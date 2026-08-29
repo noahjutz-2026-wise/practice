@@ -14,3 +14,4 @@ uv run gym
 | --------------------------------------------------------------------- | -------- | -------- |
 | Monte Carlo (ES, incremental, first-visit, on-policy, epsilon-greedy) | 5.1-5.4  | 044c0dd  |
 | Monte Carlo (ES, incremental, first-visit, off-policy)                | 5.5-5.7  | baba5bf  |
+| Temporal Difference (one-step)                                        | 6.1      | tbd      |
