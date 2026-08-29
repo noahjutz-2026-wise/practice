@@ -66,12 +66,22 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
                         reward,
                         truncated or terminated,
                     )
+                case "q_learning":
+                    Q = estimation.q_learning(
+                        Q,
+                        alpha,
+                        gamma,
+                        (*observation, action),
+                        (*new_observation, new_action),
+                        reward,
+                        truncated or terminated,
+                    )
 
             observation = new_observation
             action = new_action
 
             cum_reward += reward
-            t += 1  # noqa: SIM113
+            t += 1
 
             if truncated or terminated:
                 break
