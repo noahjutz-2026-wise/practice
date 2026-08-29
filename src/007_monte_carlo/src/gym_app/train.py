@@ -29,9 +29,6 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
     log_every = run.config["log_every"]
     task = run.config["task"]
     prediction_method = run.config["prediction_method"]
-    is_off_policy = run.config["is_off_policy"]
-
-    policy = control.b if is_off_policy else control.pi
 
     env = gym.make("CartPole-v1", render_mode=None)
     env = DiscreteCartPole(env, n_bins)
@@ -49,10 +46,10 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
         states = []
         actions = []
         observation, info = env.reset()
-        action = policy(observation, Q, epsilon)
+        action = control.b(observation, Q, 1)
         for step in itertools.count():
             new_observation, reward, terminated, truncated, info = env.step(action)
-            new_action = policy(new_observation, Q, epsilon)
+            new_action = control.b(new_observation, Q, 1 / t)
 
             match prediction_method:
                 case "monte_carlo":
