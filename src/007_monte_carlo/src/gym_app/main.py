@@ -51,8 +51,9 @@ def main():
     config = {
         "prediction_method": "monte_carlo",
         "n_bins": (15, 15, 15, 15),
-        "gamma": 0.9,
-        "epsilon": 0.1,
+        "gamma": 0.9,  # Discount factor
+        "epsilon": 0.1,  # Exploration rate
+        "alpha": 0.1,  # Step size
         "episodes": 2000,
         "log_every": 100,
     }

@@ -83,3 +83,30 @@ def monte_carlo(
         if W == 0:
             break
     return C, Q
+
+
+def tabular_td0(
+    Q: NDArray[np.float64],
+    alpha: float,
+    gamma: float,
+    old_sa: tuple[int, int, int, int, int],
+    sa: tuple[int, int, int, int, int],
+    r: float,
+) -> NDArray:
+    """
+    Tabular one-step temporal difference.
+
+    Args:
+        Q: (*n_bins, 2) state-action value estimate
+        alpha: Step size
+        gamma: Discount factor
+        old_sa: state-action pair at step t
+        sa: state-action pair at step (t+1)
+        r: reward at step (t+1)
+    Returns:
+        Q: (*n_bins, 2) next state_action value estimate
+    """
+
+    error = r + gamma * Q[sa] - Q[old_sa]
+    Q[old_sa] = Q[old_sa] + alpha * error
+    return Q

@@ -12,7 +12,9 @@ from . import control, estimation
 
 def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
     """
-    General Policy Iteration Loop
+    General Policy Iteration Loop.
+
+    Observation and state are treated as equal.
 
     Args:
         Q: (*n_bins, 2) initial state-action values
@@ -22,6 +24,7 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
     n_bins = tuple(run.config["n_bins"])
     gamma = run.config["gamma"]
     epsilon = run.config["epsilon"]
+    alpha = run.config["alpha"]
     episodes = run.config["episodes"]
     log_every = run.config["log_every"]
     task = run.config["task"]
@@ -42,12 +45,20 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
         actions = []
         observation, info = env.reset()
         for step in itertools.count():
-            states.append(observation)
             action = control.b(observation, Q, epsilon)
-            observation, reward, terminated, truncated, info = env.step(action)
+            new_observation, reward, terminated, truncated, info = env.step(action)
 
-            rewards.append(reward)
-            actions.append(action)
+            match prediction_method:
+                case "monte_carlo":
+                    states.append(observation)
+                    rewards.append(reward)
+                    actions.append(action)
+                case "tabular_td0":
+                    Q = estimation.tabular_td0(
+                        Q, alpha, gamma, observation, new_observation, reward
+                    )
+
+            observation = new_observation
 
             if truncated or terminated:
                 break
