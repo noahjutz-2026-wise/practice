@@ -16,9 +16,9 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
     General Policy Iteration Loop
 
     Args:
-        Q: (*n_bins, 2) state-action values
+        Q: (*n_bins, 2) initial state-action values
     Returns:
-        Q:
+        Q: (*n_bins, 2) state-action values after training
     """
     n_bins = tuple(run.config["n_bins"])
     gamma = run.config["gamma"]
