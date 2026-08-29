@@ -2,19 +2,13 @@ import numpy as np
 from numpy.typing import NDArray
 
 
-def b(state: NDArray, Q: NDArray, epsilon: float) -> int:
-    """
-    Behavior Policy, Epsilon-greedy
-    """
-    if np.random.random() < epsilon:
+def pi(state: NDArray, Q: NDArray, epsilon: float) -> int:
+    if epsilon < 1 and np.random.random() < epsilon:
         return np.random.randint(2)
-    return pi(state, Q)
+    return _greedy(state, Q)
 
 
-def pi(state: NDArray, Q: NDArray) -> int:
-    """
-    Target Policy, Greedy
-    """
+def _greedy(state: NDArray, Q: NDArray) -> int:
     q0, q1 = Q[tuple(state)]
     if q0 > q1:
         return 0
