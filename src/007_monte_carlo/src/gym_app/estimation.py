@@ -95,7 +95,7 @@ def sarsa(
     is_T: bool,
 ) -> NDArray:
     """
-    Tabular one-step temporal difference.
+    Sarsa (tabular, one-step TD, on-policy).
 
     Args:
         Q: (*n_bins, 2) state-action value estimate
@@ -123,7 +123,17 @@ def q_learning(
     is_T: bool,
 ) -> NDArray:
     """
-    Q-learning
+    Q-learning (tabular, one-step TD, off-policy)
+
+    Args:
+        Q: (*n_bins, 2) state-action value estimate
+        alpha: Step size
+        gamma: Discount factor
+        old_sa: state-action pair at step t
+        sa: state-action pair at step (t+1)
+        r: reward at step (t+1)
+    Returns:
+        Q: (*n_bins, 2) next state_action value estimate
     """
     s = sa[:-1]
     q_greedy = np.max(Q[s])
