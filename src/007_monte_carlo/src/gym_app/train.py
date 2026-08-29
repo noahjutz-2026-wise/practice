@@ -87,13 +87,14 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
             )
 
         if episode % log_every == 0:
+            visited = Q != 0
             run.log(
                 {
                     "episode": episode,
                     "cum_reward": cum_reward,
                     "steps": t + 1,
-                    "q_coverage": (C > 0).sum(),
-                    "q_value": Q[C > 0].mean(),
+                    "q_coverage": visited.sum(),
+                    "q_value": Q[visited].mean() if visited.any() else 0.0,
                     "stability": np.count_nonzero(Q != last_Q),
                 }
             )
