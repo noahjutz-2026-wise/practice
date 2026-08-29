@@ -44,8 +44,9 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
         states = []
         actions = []
         observation, info = env.reset()
+        action = None
         for step in itertools.count():
-            action = control.b(observation, Q, epsilon)
+            new_action = control.b(observation, Q, epsilon)
             new_observation, reward, terminated, truncated, info = env.step(action)
 
             match prediction_method:
@@ -55,10 +56,16 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
                     actions.append(action)
                 case "tabular_td0":
                     Q = estimation.tabular_td0(
-                        Q, alpha, gamma, observation, new_observation, reward
+                        Q,
+                        alpha,
+                        gamma,
+                        (*observation, action),
+                        (*new_observation, new_action),
+                        reward,
                     )
 
             observation = new_observation
+            action = new_action
 
             if truncated or terminated:
                 break
