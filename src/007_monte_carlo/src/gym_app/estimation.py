@@ -92,6 +92,7 @@ def sarsa(
     old_sa: tuple[int, int, int, int, int],
     sa: tuple[int, int, int, int, int],
     r: float,
+    is_T: bool,
 ) -> NDArray:
     """
     Tabular one-step temporal difference.
@@ -107,6 +108,6 @@ def sarsa(
         Q: (*n_bins, 2) next state_action value estimate
     """
 
-    error = r + gamma * Q[sa] - Q[old_sa]
+    error = r + gamma * Q[sa] * (1 - is_T) - Q[old_sa]
     Q[old_sa] = Q[old_sa] + alpha * error
     return Q

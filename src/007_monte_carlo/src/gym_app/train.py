@@ -62,6 +62,7 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
                         (*observation, action),
                         (*new_observation, new_action),
                         reward,
+                        truncated or terminated,
                     )
 
             observation = new_observation
