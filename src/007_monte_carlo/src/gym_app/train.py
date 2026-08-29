@@ -75,9 +75,10 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
         rewards = np.array(rewards)
         actions = np.array(actions)
 
+        if episode % log_every == 0:
+            last_Q = Q.copy()
+
         if task == "train" and prediction_method == "monte_carlo":
-            if episode % log_every == 0:
-                last_Q = Q.copy()
             C, Q = estimation.monte_carlo(
                 rewards, states, actions, gamma, epsilon, C, Q
             )
