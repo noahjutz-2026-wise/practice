@@ -1,7 +1,6 @@
 import itertools
 
 import gymnasium as gym
-import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
 
