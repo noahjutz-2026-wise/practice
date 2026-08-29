@@ -7,7 +7,7 @@ from . import train
 entity = "tjno"
 project = "rl"
 mode = "online"
-group = "sarsa_batch1"
+group = "sarsa_batch2"
 
 
 def experiment_eval(config: wandb.sdk.Config, model_name: str | None = None):

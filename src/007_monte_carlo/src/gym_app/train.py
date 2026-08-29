@@ -41,14 +41,15 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
 
     for episode in range(episodes):
         cum_reward = 0
+        t = 1
         rewards = []
         states = []
         actions = []
         observation, info = env.reset()
         action = control.b(observation, Q, 1)
-        for t in itertools.count():
+        for step in itertools.count():
             new_observation, reward, terminated, truncated, info = env.step(action)
-            new_action = control.b(new_observation, Q, 1 / (t + 1))
+            new_action = control.b(new_observation, Q, 1 / t)
 
             match prediction_method:
                 case "monte_carlo":
@@ -70,6 +71,7 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
             action = new_action
 
             cum_reward += reward
+            t += 1  # noqa: SIM113
 
             if truncated or terminated:
                 break
@@ -92,7 +94,7 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
                 {
                     "episode": episode,
                     "cum_reward": cum_reward,
-                    "steps": t + 1,
+                    "steps": step + 1,
                     "q_coverage": visited.sum(),
                     "q_value": Q[visited].mean() if visited.any() else 0.0,
                     "stability": np.count_nonzero(Q != last_Q),
