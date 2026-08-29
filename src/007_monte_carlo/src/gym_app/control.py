@@ -11,7 +11,7 @@ def b(state: NDArray, Q: NDArray, epsilon: float) -> int:
     return pi(state, Q)
 
 
-def pi(state: NDArray, Q: NDArray) -> int:
+def pi(state: NDArray, Q: NDArray, *_sink) -> int:
     """
     Target Policy, Greedy
     """
