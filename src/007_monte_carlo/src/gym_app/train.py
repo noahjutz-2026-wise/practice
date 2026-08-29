@@ -40,6 +40,7 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
     )  # Monte Carlo incremental Average (+ 1/M * error)
 
     for episode in range(episodes):
+        cum_reward = 0
         rewards = []
         states = []
         actions = []
@@ -68,6 +69,8 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
             observation = new_observation
             action = new_action
 
+            cum_reward += reward
+
             if truncated or terminated:
                 break
 
@@ -87,7 +90,7 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
             run.log(
                 {
                     "episode": episode,
-                    "cum_reward": rewards.sum(),
+                    "cum_reward": cum_reward,
                     "steps": t + 1,
                     "q_coverage": (C > 0).sum(),
                     "q_value": Q[C > 0].mean(),

@@ -49,7 +49,7 @@ def experiment_train(config: wandb.sdk.Config, model_name: str | None = None):
 
 def main():
     config = {
-        "prediction_method": "monte_carlo",
+        "prediction_method": "sarsa",
         "n_bins": (15, 15, 15, 15),
         "gamma": 0.9,  # Discount factor
         "epsilon": 0.1,  # Exploration rate
