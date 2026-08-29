@@ -111,3 +111,22 @@ def sarsa(
     error = r + gamma * Q[sa] * (1 - is_T) - Q[old_sa]
     Q[old_sa] = Q[old_sa] + alpha * error
     return Q
+
+
+def q_learning(
+    Q: NDArray[np.float64],
+    alpha: float,
+    gamma: float,
+    old_sa: tuple[int, int, int, int, int],
+    sa: tuple[int, int, int, int, int],
+    r: float,
+    is_T: bool,
+) -> NDArray:
+    """
+    Q-learning
+    """
+    s = sa[:-1]
+    q_greedy = np.max(Q[s])
+    error = r + gamma * q_greedy * (1 - is_T) - Q[old_sa]
+    Q[old_sa] = Q[old_sa] + alpha * error
+    return Q
