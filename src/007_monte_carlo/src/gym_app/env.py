@@ -15,9 +15,7 @@ class DiscreteCartPole(ObservationWrapper):
         bin_hi = np.array([4.8, 5.0, 0.418, 5.0])
         n_bins_arr = np.array(n_bins, dtype=np.float64)
         self.bin_step = (bin_hi - self.bin_lo) / (n_bins_arr - 1)
-        self.bin_max = np.array(
-            n_bins, dtype=np.int64
-        )  # max index = n_bins (one past last edge)
+        self.bin_max = np.array(n_bins, dtype=np.int64) - 1  # last valid index
 
     def observation(self, observation: ObsType) -> WrapperObsType:
         return np.clip(

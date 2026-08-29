@@ -47,7 +47,7 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
         action = control.b(observation, Q, 1)
         for t in itertools.count():
             new_observation, reward, terminated, truncated, info = env.step(action)
-            new_action = control.b(observation, Q, 1 / (t + 1))
+            new_action = control.b(new_observation, Q, 1 / (t + 1))
 
             match prediction_method:
                 case "monte_carlo":
