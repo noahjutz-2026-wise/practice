@@ -85,7 +85,7 @@ def monte_carlo(
     return C, Q
 
 
-def tabular_td0(
+def sarsa(
     Q: NDArray[np.float64],
     alpha: float,
     gamma: float,

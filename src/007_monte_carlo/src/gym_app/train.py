@@ -54,8 +54,8 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
                     states.append(observation)
                     rewards.append(reward)
                     actions.append(action)
-                case "tabular_td0":
-                    Q = estimation.tabular_td0(
+                case "sarsa":
+                    Q = estimation.sarsa(
                         Q,
                         alpha,
                         gamma,
