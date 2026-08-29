@@ -12,6 +12,14 @@ from . import control, estimation
 
 
 def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
+    """
+    General Policy Iteration Loop
+
+    Args:
+        Q: (*n_bins, 2) state-action values
+    Returns:
+        Q:
+    """
     n_bins = tuple(run.config["n_bins"])
     gamma = run.config["gamma"]
     epsilon = run.config["epsilon"]

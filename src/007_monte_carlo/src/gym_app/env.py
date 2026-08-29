@@ -4,6 +4,10 @@ from gymnasium.core import ActType, Env, ObsType, WrapperObsType
 
 
 class DiscreteCartPole(ObservationWrapper):
+    """
+    CartPole-v1 wrapper that digitizes continuous observations into discrete bins.
+    """
+
     def __init__(self, env: Env[ObsType, ActType], n_bins: tuple[int, int, int, int]):
         super().__init__(env)
         self.n_bins = n_bins

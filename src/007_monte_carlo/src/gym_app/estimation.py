@@ -53,8 +53,8 @@ def monte_carlo(
         actions: (T,)
         gamma: Discount factor
         epsilon: Exploring Rate
-        C: (n_bins,)*4+(2,); Cumulative weight for each state
-        Q: (n_bins,)*4+(2,); state-action value
+        C: (*n_bins, 2) Cumulative weight for each state
+        Q: (*n_bins, 2) state-action value
     Returns:
         C, Q
     """
