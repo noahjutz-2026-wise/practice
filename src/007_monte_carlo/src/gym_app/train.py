@@ -38,7 +38,6 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
     )  # Monte Carlo incremental Average (+ 1/M * error)
 
     for episode in range(episodes):
-        # if episode == episodes - 10:
         rewards = []
         states = []
         actions = []
