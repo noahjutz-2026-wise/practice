@@ -5,9 +5,9 @@ import wandb
 from . import train
 
 entity = "tjno"
-project = "monte_carlo"
+project = "rl"
 mode = "online"
-group = "tmp"
+group = "sarsa_batch1"
 
 
 def experiment_eval(config: wandb.sdk.Config, model_name: str | None = None):
@@ -22,7 +22,7 @@ def experiment_eval(config: wandb.sdk.Config, model_name: str | None = None):
 
 def experiment_train(config: wandb.sdk.Config, model_name: str | None = None):
     config["task"] = "train"
-    n_runs = 1
+    n_runs = 20
 
     for r in range(n_runs):
         print(f"Run={r}")
@@ -53,7 +53,7 @@ def main():
         "n_bins": (15, 15, 15, 15),
         "gamma": 0.9,  # Discount factor
         "epsilon": 0.1,  # Exploration rate
-        "alpha": 0.1,  # Step size
+        "alpha": 0.05,  # Step size
         "episodes": 2000,
         "log_every": 100,
     }
