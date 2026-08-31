@@ -6,8 +6,9 @@ from numpy.typing import NDArray
 
 import wandb
 from gym_app.env import DiscreteCartPole
+from gym_app.policy import Policy
 
-from . import control, prediction
+from . import prediction
 
 
 def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
@@ -39,6 +40,8 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
         shape=n_bins + (2,), dtype=np.float64
     )  # Monte Carlo incremental Average (+ 1/M * error)
 
+    pi = Policy(epsilon, env, Q)
+
     for episode in range(episodes):
         cum_reward = 0
         t = 1
@@ -46,10 +49,10 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
         states = []
         actions = []
         observation, info = env.reset()
-        action = control.pi(observation, Q, epsilon)
+        action = pi(observation, Q, epsilon)
         for step in itertools.count():
             new_observation, reward, terminated, truncated, info = env.step(action)
-            new_action = control.pi(new_observation, Q, epsilon)
+            new_action = pi(new_observation, Q, epsilon)
 
             match prediction_method:
                 case "monte_carlo":

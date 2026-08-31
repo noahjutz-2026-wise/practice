@@ -3,45 +3,28 @@ from collections.abc import Callable
 import numpy as np
 from numpy.typing import NDArray
 
-
-def p_pi(a: int, s: tuple[int, int, int, int], Q: NDArray, epsilon: float = 0) -> float:
-    """
-    Args:
-        a: Action (0 or 1)
-        s: State
-        Q: state-action values
-        epsilon: Exploration rate
-    Returns:
-        probability of choosing a in s in [0, 1]
-    Probability Pr(a | s) for an epsilon-greedy policy w.r.t action-values Q
-    """
-    p_e = epsilon / 2  # explore
-    p_g = 1 - epsilon  # exploit
-    is_greedy_a = a == np.argmax(Q[s], axis=-1)
-    if is_greedy_a:
-        return p_g + p_e
-    else:
-        return p_e
+from gym_app.policy import Policy
 
 
-def isr(epsilon: float, Q: NDArray, action: int, state: NDArray) -> float:
+def isr(pi: Policy, b: Policy, a: int, s: tuple[int, int, int, int]) -> float:
     """
     One factor of the Incremental Importance-Sampling Ratio for
     - an epsilon-greedy behavior policy b
     - a greedy target policy pi
     with the same state-action values Q.
+
+    Args:
+        pi: Target policy
+        b: Behavior policy
+        a: Action
+        s: State
+    Returns:
+        pi(a | s)/b(a | s). To get the ISR rho_(t:T-1), create product over all time steps.
     """
 
-    A = 2  # amount of actions A(s)
-
-    def ratio():
-        a = action
-        s = tuple(state)
-        if p_pi(a, s, epsilon=epsilon) == 0:
-            return 0
-        return p_pi(a, s) / p_pi(a, s, epsilon=epsilon)
-
-    return ratio()
+    if pi.p(a, s) == 0:
+        return 0
+    return pi.p(a, s) / b.p(a, s)
 
 
 def monte_carlo(
@@ -158,7 +141,7 @@ def expected_sarsa(
     sa: tuple[int, int, int, int, int],
     r: float,
     is_T: bool,
-    policy: Callable[[int, int], float],
+    pi: Policy,
 ) -> NDArray:
     """
     Move towards expectation
@@ -170,7 +153,7 @@ def expected_sarsa(
         old_sa: state-action pair at step t
         sa: state-action pair at step (t+1)
         r: reward at step (t+1)
-        policy: probability pi(a | s) -> [0, 1]
+        pi: Target policy
     Returns:
         Q: (*n_bins, 2) next state_action value estimate
     """
@@ -178,7 +161,7 @@ def expected_sarsa(
     s = sa[:-1]
     expected_q = 0
     for a in range(2):
-        p = policy(a, s)
+        p = pi.p(a, s)
         q = Q[(*s, a)]
         expected_q += p * q
 
