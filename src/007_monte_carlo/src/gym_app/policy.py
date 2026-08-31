@@ -25,7 +25,7 @@ class Policy:
             action in {0, 1}
         """
         if self.epsilon < 1 and self.random.random() < self.epsilon:
-            return np.random.randint(2)
+            return self.random.integers(2)
         return self._greedy(s)
 
     def p(self, a: int, s: State) -> float:

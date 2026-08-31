@@ -40,7 +40,8 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
         shape=n_bins + (2,), dtype=np.float64
     )  # Monte Carlo incremental Average (+ 1/M * error)
 
-    pi = Policy(epsilon, env, Q)
+    pi = Policy(0, env, Q)
+    b = Policy(epsilon, env, Q)
 
     for episode in range(episodes):
         cum_reward = 0
@@ -49,10 +50,11 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
         states = []
         actions = []
         observation, info = env.reset()
-        action = pi(observation, Q, epsilon)
+        action = b.a(observation, Q, epsilon)
         for step in itertools.count():
+            pi.update(Q)
             new_observation, reward, terminated, truncated, info = env.step(action)
-            new_action = pi(new_observation, Q, epsilon)
+            new_action = b.a(new_observation, Q, epsilon)
 
             match prediction_method:
                 case "monte_carlo":
@@ -98,7 +100,7 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
 
         if task == "train" and prediction_method == "monte_carlo":
             C, Q = prediction.monte_carlo(
-                rewards, states, actions, gamma, epsilon, C, Q
+                rewards, states, actions, gamma, epsilon, C, Q, pi, b
             )
 
         if episode % log_every == 0:
