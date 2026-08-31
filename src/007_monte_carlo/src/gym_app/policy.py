@@ -24,7 +24,7 @@ class Policy:
         Returns:
             action in {0, 1}
         """
-        if self.epsilon < 1 and self.random.random() < self.epsilon:
+        if self.epsilon > 0 and self.random.random() < self.epsilon:
             return self.random.integers(2)
         return self._greedy(s)
 
@@ -55,4 +55,4 @@ class Policy:
             return 0
         elif q1 > q0:
             return 1
-        return np.random.randint(2)
+        return self.random.integers(2)
