@@ -81,6 +81,17 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
                         reward,
                         truncated or terminated,
                     )
+                case "expected_sarsa":
+                    Q = prediction.expected_sarsa(
+                        Q,
+                        alpha,
+                        gamma,
+                        (*observation, action),
+                        (*new_observation, new_action),
+                        reward,
+                        truncated or terminated,
+                        pi,
+                    )
 
             observation = new_observation
             action = new_action
