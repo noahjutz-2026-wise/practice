@@ -1,17 +1,28 @@
+from collections.abc import Callable
+
 import numpy as np
 from numpy.typing import NDArray
 
-def p_pi(a: int, s: tuple[int, int, int, int], epsilon: float = 0):
+
+def p_pi(a: int, s: tuple[int, int, int, int], Q: NDArray, epsilon: float = 0) -> float:
     """
-    Probability of choosing a | s
+    Args:
+        a: Action (0 or 1)
+        s: State
+        Q: state-action values
+        epsilon: Exploration rate
+    Returns:
+        probability of choosing a in s
+    Probability Pr(a | s) for an epsilon-greedy policy w.r.t action-values Q
     """
-    p_e = epsilon / A  # explore
+    p_e = epsilon / 2  # explore
     p_g = 1 - epsilon  # exploit
     is_greedy_a = a == np.argmax(Q[s], axis=-1)
     if is_greedy_a:
         return p_g + p_e
     else:
         return p_e
+
 
 def isr(epsilon: float, Q: NDArray, action: int, state: NDArray) -> float:
     """
@@ -138,6 +149,7 @@ def q_learning(
     Q[old_sa] = Q[old_sa] + alpha * error
     return Q
 
+
 def expedced_sarsa(
     Q: NDArray[np.float64],
     alpha: float,
@@ -146,4 +158,19 @@ def expedced_sarsa(
     sa: tuple[int, int, int, int, int],
     r: float,
     is_T: bool,
+    policy: Callable[[int, int], float],
 ) -> NDArray:
+    """
+    Move towards expectation
+
+    Args:
+        Q: (*n_bins, 2) state-action value estimate
+        alpha: Step size
+        gamma: Discount factor
+        old_sa: state-action pair at step t
+        sa: state-action pair at step (t+1)
+        r: reward at step (t+1)
+        policy: probability pi(a | s) -> [0, 1]
+    Returns:
+        Q: (*n_bins, 2) next state_action value estimate
+    """
