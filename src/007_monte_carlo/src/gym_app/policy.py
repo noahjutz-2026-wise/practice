@@ -11,9 +11,16 @@ class Policy:
     """
 
     def __init__(self, epsilon: float, env: Env, Q: NDArray):
+        """
+        Args:
+            epsilon: Exploration rate. 1=random, 0=deterministic, None=1/t
+            env: Gymnasium environment
+            Q: state-action values
+        """
         self.epsilon = epsilon
         self.random = env.np_random
         self.Q = Q
+        self._t = 1
 
     def a(self, s: State) -> int:
         """
@@ -24,7 +31,10 @@ class Policy:
         Returns:
             action in {0, 1}
         """
-        if self.epsilon > 0 and self.random.random() < self.epsilon:
+        if (
+            self._exploration_rate() > 0
+            and self.random.random() < self._exploration_rate()
+        ):
             return self.random.integers(2)
         return self._greedy(s)
 
@@ -38,8 +48,8 @@ class Policy:
         Returns:
             Pr(a | s) in [0, 1]
         """
-        p_e = self.epsilon / 2  # explore
-        p_g = 1 - self.epsilon  # exploit
+        p_e = self._exploration_rate() / 2  # explore
+        p_g = 1 - self._exploration_rate()  # exploit
         is_greedy_a = a == np.argmax(self.Q[tuple(s)], axis=-1)
         if is_greedy_a:
             return p_g + p_e
@@ -49,6 +59,9 @@ class Policy:
     def update(self, Q: NDArray) -> None:
         self.Q = Q
 
+    def step(self) -> None:
+        self._t += 1
+
     def _greedy(self, s: State) -> int:
         q0, q1 = self.Q[tuple(s)]
         if q0 > q1:
@@ -56,3 +69,10 @@ class Policy:
         elif q1 > q0:
             return 1
         return self.random.integers(2)
+
+    def _exploration_rate(self) -> float:
+        if type(self.epsilon) is float:
+            return self.epsilon
+        if self.epsilon is None:
+            return 1 / self.t
+        raise ValueError()
