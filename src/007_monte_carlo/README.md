@@ -17,3 +17,4 @@ uv run gym
 | Sarsa (one-step TD, on-policy)                                        | 6.1-6.4  | f66ab5e  |
 | Q-Learning (one-step TD, off-policy)                                  | 6.5      | 110f8b3  |
 | Expected Sarsa                                                        | 6.6      | 0e1d497  |
+| Double Q-Learning                                                     | 6.7      | tbd      |
