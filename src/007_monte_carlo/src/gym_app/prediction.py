@@ -191,16 +191,18 @@ def n_step_td(
     Q: NDArray[np.float64],
     alpha: float,
     gamma: float,
+    old_sa: tuple[int, int, int, int],
     sa: tuple[int, int, int, int, int],
     r: NDArray,
     is_T: bool,
     n: int,
-):
+) -> NDArray:
     """
     Args:
         Q: (*n_bins, 2) state-action value estimate
         alpha: Step size
         gamma: Discount factor
+        old_sa: state-action pair at step (t-n+1)
         sa: state-action pair at step (t+1)
         r: last n rewards (t-n+1,...,t+1)
         is_T: True if this step is the last before termination
@@ -208,7 +210,7 @@ def n_step_td(
     Returns:
         Q: (*n_bins, 2) next state_action value estimate
     """
-    r = r[:-n]
+    r = r[-n:]
 
     G = 0
     for i in range(n):
@@ -216,4 +218,6 @@ def n_step_td(
     if not is_T:
         G += gamma**n * Q[sa]
 
-    Q[sa] += alpha * (G - Q[sa])
+    Q[old_sa] += alpha * (G - Q[sa])
+
+    return Q
