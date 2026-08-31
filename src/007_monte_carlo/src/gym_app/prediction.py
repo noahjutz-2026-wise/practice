@@ -1,6 +1,7 @@
 from collections.abc import Callable
 
 import numpy as np
+from numpy.random import Generator
 from numpy.typing import NDArray
 
 from gym_app.policy import Policy
@@ -109,32 +110,39 @@ def sarsa(
 
 
 def q_learning(
-    Q: NDArray[np.float64],
+    Q1: NDArray[np.float64],
+    Q2: NDArray[np.float64],
     alpha: float,
     gamma: float,
     old_sa: tuple[int, int, int, int, int],
     sa: tuple[int, int, int, int, int],
     r: float,
     is_T: bool,
+    random: Generator,
 ) -> NDArray:
     """
     Q-learning (tabular, one-step TD, off-policy)
 
     Args:
-        Q: (*n_bins, 2) state-action value estimate
+        Q1: (*n_bins, 2) state-action value estimate
+        Q2: (*n_bins, 2) state-action value estimate for double learning. Pass Q1=Q2 to disable.
         alpha: Step size
         gamma: Discount factor
         old_sa: state-action pair at step t
         sa: state-action pair at step (t+1)
         r: reward at step (t+1)
+        is_T: True if this step is the last before termination
+        random: Numpy RNG
     Returns:
         Q: (*n_bins, 2) next state_action value estimate
     """
     s = sa[:-1]
-    q_greedy = np.max(Q[s])
-    error = r + gamma * q_greedy * (1 - is_T) - Q[old_sa]
-    Q[old_sa] = Q[old_sa] + alpha * error
-    return Q
+    (Qa, Qb) = random.shuffle([Q2, Q1])
+    greedy_a = np.max(Qa[s])
+    greedy_v = Qb[(*s, greedy_a)]
+    error = r + gamma * greedy_v * (1 - is_T) - Qa[old_sa]
+    Qa[old_sa] += alpha * error
+    return Q1
 
 
 def expected_sarsa(
