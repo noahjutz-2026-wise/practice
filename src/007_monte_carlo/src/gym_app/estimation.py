@@ -12,7 +12,7 @@ def p_pi(a: int, s: tuple[int, int, int, int], Q: NDArray, epsilon: float = 0) -
         Q: state-action values
         epsilon: Exploration rate
     Returns:
-        probability of choosing a in s
+        probability of choosing a in s in [0, 1]
     Probability Pr(a | s) for an epsilon-greedy policy w.r.t action-values Q
     """
     p_e = epsilon / 2  # explore
@@ -174,3 +174,14 @@ def expedced_sarsa(
     Returns:
         Q: (*n_bins, 2) next state_action value estimate
     """
+
+    s = sa[:1]
+    expected_q = 0
+    for a in range(2):
+        p = policy(a, s)
+        q = Q[(*s, a)]
+        expected_q += p * q
+
+    error = r + gamma * expected_q * (1 - is_T) - Q[sa]
+    Q[sa] += alpha * error
+    return Q
