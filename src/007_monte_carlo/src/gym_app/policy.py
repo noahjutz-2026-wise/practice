@@ -40,7 +40,7 @@ class Policy:
         """
         p_e = self.epsilon / 2  # explore
         p_g = 1 - self.epsilon  # exploit
-        is_greedy_a = a == np.argmax(self.Q[s], axis=-1)
+        is_greedy_a = a == np.argmax(self.Q[tuple(s)], axis=-1)
         if is_greedy_a:
             return p_g + p_e
         else:
