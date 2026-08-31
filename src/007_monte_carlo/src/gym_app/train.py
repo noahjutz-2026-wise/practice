@@ -30,6 +30,7 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
     log_every = run.config["log_every"]
     task = run.config["task"]
     prediction_method = run.config["prediction_method"]
+    seed = run.config["seed"]
 
     env = gym.make("CartPole-v1", render_mode=None)
     env = DiscreteCartPole(env, n_bins)
@@ -55,7 +56,7 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
         rewards = []
         states = []
         actions = []
-        observation, info = env.reset()
+        observation, info = env.reset(seed=seed)
         action = b.a(tuple(observation))
         for step in itertools.count():
             pi.update(Q1 + Q2)

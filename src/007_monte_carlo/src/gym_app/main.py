@@ -56,6 +56,7 @@ def main():
         "alpha": 0.2,  # Step size
         "episodes": 2000,
         "log_every": 100,
+        "seed": 0,
     }
 
     experiment_train(config)
