@@ -7,7 +7,7 @@ from . import train
 entity = "tjno"
 project = "rl"
 mode = "online"
-group = "double_q_learning_batch1"
+group = "double_q_learning_batch2"
 
 
 def experiment_eval(config: wandb.sdk.Config, model_name: str | None = None):
@@ -50,10 +50,10 @@ def experiment_train(config: wandb.sdk.Config, model_name: str | None = None):
 def main():
     config = {
         "prediction_method": "double_q_learning",
-        "n_bins": (15, 15, 15, 15),
-        "gamma": 0.9,  # Discount factor
-        "epsilon": 0.1,  # Exploration rate
-        "alpha": 0.05,  # Step size
+        "n_bins": (5, 5, 8, 8),
+        "gamma": 0.99,  # Discount factor
+        "epsilon": 0.05,  # Exploration rate
+        "alpha": 0.2,  # Step size
         "episodes": 2000,
         "log_every": 100,
     }
