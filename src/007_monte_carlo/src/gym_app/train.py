@@ -11,7 +11,7 @@ from gym_app.policy import Policy
 from . import prediction
 
 
-def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
+def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
     """
     General Policy Iteration Loop.
 
@@ -34,16 +34,18 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
     env = gym.make("CartPole-v1", render_mode=None)
     env = DiscreteCartPole(env, n_bins)
 
-    if Q is None:
-        Q = np.zeros(shape=n_bins + (2,), dtype=np.float64)
+    Q2 = np.zeros(shape=n_bins + (2,), dtype=np.float64)
+
+    if Q1 is None:
+        Q1 = np.zeros(shape=n_bins + (2,), dtype=np.float64)
     C = np.zeros(
         shape=n_bins + (2,), dtype=np.float64
     )  # Monte Carlo incremental Average (+ 1/M * error)
 
-    pi = Policy(0, env, Q)
-    b = Policy(epsilon, env, Q)
+    pi = Policy(0, env, Q1 + Q2)
+    b = Policy(epsilon, env, Q1 + Q2)
 
-    last_Q = Q.copy()
+    last_Q1 = Q1.copy()
 
     for episode in range(episodes):
         cum_reward = 0
@@ -54,7 +56,7 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
         observation, info = env.reset()
         action = b.a(tuple(observation))
         for step in itertools.count():
-            pi.update(Q)
+            pi.update(Q1 + Q2)
             new_observation, reward, terminated, truncated, info = env.step(action)
             new_action = b.a(tuple(new_observation))
 
@@ -64,8 +66,8 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
                     rewards.append(reward)
                     actions.append(action)
                 case "sarsa":
-                    Q = prediction.sarsa(
-                        Q,
+                    Q1 = prediction.sarsa(
+                        Q1,
                         alpha,
                         gamma,
                         (*observation, action),
@@ -74,8 +76,8 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
                         truncated or terminated,
                     )
                 case "q_learning":
-                    Q = prediction.q_learning(
-                        Q,
+                    Q1 = prediction.q_learning(
+                        Q1,
                         alpha,
                         gamma,
                         (*observation, action),
@@ -84,8 +86,8 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
                         truncated or terminated,
                     )
                 case "expected_sarsa":
-                    Q = prediction.expected_sarsa(
-                        Q,
+                    Q1 = prediction.expected_sarsa(
+                        Q1,
                         alpha,
                         gamma,
                         (*observation, action),
@@ -109,24 +111,24 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
         actions = np.array(actions)
 
         if task == "train" and prediction_method == "monte_carlo":
-            C, Q = prediction.monte_carlo(
-                rewards, states, actions, gamma, epsilon, C, Q, pi, b
+            C, Q1 = prediction.monte_carlo(
+                rewards, states, actions, gamma, epsilon, C, Q1, pi, b
             )
 
         if episode % log_every == 0:
-            visited = Q != 0
+            visited = Q1 != 0
             run.log(
                 {
                     "episode": episode,
                     "cum_reward": cum_reward,
                     "steps": step + 1,
                     "q_coverage": visited.sum(),
-                    "q_value": Q[visited].mean() if visited.any() else 0.0,
-                    "stability": np.count_nonzero(Q != last_Q),
+                    "q_value": Q1[visited].mean() if visited.any() else 0.0,
+                    "stability": np.count_nonzero(Q1 != last_Q1),
                 }
             )
-            last_Q = Q.copy()
+            last_Q1 = Q1.copy()
 
     env.close()
 
-    return Q
+    return Q1 + Q2
