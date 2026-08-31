@@ -96,6 +96,17 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
                         truncated or terminated,
                         pi,
                     )
+                case "double_q_learning":
+                    Q1, Q2 = prediction.q_learning(
+                        Q1,
+                        Q2,
+                        alpha,
+                        gamma,
+                        (*observation, action),
+                        (*new_observation, new_action),
+                        reward,
+                        truncated or terminated,
+                    )
 
             observation = new_observation
             action = new_action
