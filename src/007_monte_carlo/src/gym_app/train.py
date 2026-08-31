@@ -43,6 +43,8 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
     pi = Policy(0, env, Q)
     b = Policy(epsilon, env, Q)
 
+    last_Q = Q.copy()
+
     for episode in range(episodes):
         cum_reward = 0
         t = 1
@@ -106,9 +108,6 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
         rewards = np.array(rewards)
         actions = np.array(actions)
 
-        if episode % log_every == 0:
-            last_Q = Q.copy()
-
         if task == "train" and prediction_method == "monte_carlo":
             C, Q = prediction.monte_carlo(
                 rewards, states, actions, gamma, epsilon, C, Q, pi, b
@@ -126,6 +125,7 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
                     "stability": np.count_nonzero(Q != last_Q),
                 }
             )
+            last_Q = Q.copy()
 
     env.close()
 
