@@ -150,7 +150,7 @@ def q_learning(
     return Q
 
 
-def expedced_sarsa(
+def expected_sarsa(
     Q: NDArray[np.float64],
     alpha: float,
     gamma: float,
@@ -175,13 +175,13 @@ def expedced_sarsa(
         Q: (*n_bins, 2) next state_action value estimate
     """
 
-    s = sa[:1]
+    s = sa[:-1]
     expected_q = 0
     for a in range(2):
         p = policy(a, s)
         q = Q[(*s, a)]
         expected_q += p * q
 
-    error = r + gamma * expected_q * (1 - is_T) - Q[sa]
+    error = r + gamma * expected_q * (1 - is_T) - Q[old_sa]
     Q[sa] += alpha * error
     return Q
