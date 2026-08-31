@@ -7,7 +7,7 @@ from numpy.typing import NDArray
 import wandb
 from gym_app.env import DiscreteCartPole
 
-from . import control, estimation
+from . import control, prediction
 
 
 def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
@@ -57,7 +57,7 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
                     rewards.append(reward)
                     actions.append(action)
                 case "sarsa":
-                    Q = estimation.sarsa(
+                    Q = prediction.sarsa(
                         Q,
                         alpha,
                         gamma,
@@ -67,7 +67,7 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
                         truncated or terminated,
                     )
                 case "q_learning":
-                    Q = estimation.q_learning(
+                    Q = prediction.q_learning(
                         Q,
                         alpha,
                         gamma,
@@ -94,7 +94,7 @@ def train(run: wandb.Run, Q: NDArray | None = None) -> NDArray:
             last_Q = Q.copy()
 
         if task == "train" and prediction_method == "monte_carlo":
-            C, Q = estimation.monte_carlo(
+            C, Q = prediction.monte_carlo(
                 rewards, states, actions, gamma, epsilon, C, Q
             )
 
