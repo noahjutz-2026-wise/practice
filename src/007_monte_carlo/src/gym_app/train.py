@@ -57,6 +57,7 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
         action = b.a(tuple(observation))
         for step in itertools.count():
             pi.update(Q1 + Q2)
+            b.update(Q1 + Q2)
             new_observation, reward, terminated, truncated, info = env.step(action)
             new_action = b.a(tuple(new_observation))
 
@@ -76,7 +77,7 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
                         truncated or terminated,
                     )
                 case "q_learning":
-                    Q1 = prediction.q_learning(
+                    Q1, _ = prediction.q_learning(
                         Q1,
                         alpha,
                         gamma,
@@ -84,6 +85,7 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
                         (*new_observation, new_action),
                         reward,
                         truncated or terminated,
+                        env.np_random,
                     )
                 case "expected_sarsa":
                     Q1 = prediction.expected_sarsa(
@@ -99,13 +101,14 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
                 case "double_q_learning":
                     Q1, Q2 = prediction.q_learning(
                         Q1,
-                        Q2,
                         alpha,
                         gamma,
                         (*observation, action),
                         (*new_observation, new_action),
                         reward,
                         truncated or terminated,
+                        env.np_random,
+                        Q2=Q2,
                     )
 
             observation = new_observation

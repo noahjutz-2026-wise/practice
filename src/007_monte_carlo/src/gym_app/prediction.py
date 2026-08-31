@@ -138,8 +138,11 @@ def q_learning(
         Q2: (*n_bins, 2) next state_action value estimate
     """
     s = sa[:-1]
-    Qa, Qb = (Q1, Q1) if Q2 is None else random.shuffle([Q2, Q1])
-    greedy_a = np.max(Qa[s])
+    pair = [Q1, Q2 if Q2 is not None else Q1]
+    random.shuffle(pair)
+    Qa, Qb = pair
+
+    greedy_a = np.argmax(Qa[s])
     greedy_v = Qb[(*s, greedy_a)]
     error = r + gamma * greedy_v * (1 - is_T) - Qa[old_sa]
     Qa[old_sa] += alpha * error
