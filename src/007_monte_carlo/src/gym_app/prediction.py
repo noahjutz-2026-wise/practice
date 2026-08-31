@@ -169,6 +169,7 @@ def expected_sarsa(
         old_sa: state-action pair at step t
         sa: state-action pair at step (t+1)
         r: reward at step (t+1)
+        is_T: True if this step is the last before termination
         pi: Target policy
     Returns:
         Q: (*n_bins, 2) next state_action value estimate
@@ -184,3 +185,35 @@ def expected_sarsa(
     error = r + gamma * expected_q * (1 - is_T) - Q[old_sa]
     Q[old_sa] += alpha * error
     return Q
+
+
+def n_step_td(
+    Q: NDArray[np.float64],
+    alpha: float,
+    gamma: float,
+    sa: tuple[int, int, int, int, int],
+    r: NDArray,
+    is_T: bool,
+    n: int,
+):
+    """
+    Args:
+        Q: (*n_bins, 2) state-action value estimate
+        alpha: Step size
+        gamma: Discount factor
+        sa: state-action pair at step (t+1)
+        r: last n rewards (t-n+1,...,t+1)
+        is_T: True if this step is the last before termination
+        n: Look n steps ahead
+    Returns:
+        Q: (*n_bins, 2) next state_action value estimate
+    """
+    r = r[:-n]
+
+    G = 0
+    for i in range(n):
+        G += gamma**i * r[i]
+    if not is_T:
+        G += gamma**n * Q[sa]
+
+    Q[sa] += alpha * (G - Q[sa])
