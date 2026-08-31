@@ -138,7 +138,7 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
                     "episode": episode,
                     "cum_reward": cum_reward,
                     "steps": step + 1,
-                    "q_coverage": visited.sum(),
+                    "q_coverage": visited.sum() / Q1.size,
                     "q_value": (Q1 + Q2)[visited].mean() if visited.any() else 0.0,
                     "stability": np.count_nonzero(Q1 != last_Q1),
                     "exploration_rate": b._exploration_rate(),
