@@ -141,6 +141,7 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
                     "q_coverage": visited.sum(),
                     "q_value": Q1[visited].mean() if visited.any() else 0.0,
                     "stability": np.count_nonzero(Q1 != last_Q1),
+                    "exploration_rate": b._exploration_rate(),
                 }
             )
             last_Q1 = Q1.copy()
