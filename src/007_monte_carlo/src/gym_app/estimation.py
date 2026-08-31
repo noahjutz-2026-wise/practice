@@ -1,6 +1,17 @@
 import numpy as np
 from numpy.typing import NDArray
 
+def p_pi(a: int, s: tuple[int, int, int, int], epsilon: float = 0):
+    """
+    Probability of choosing a | s
+    """
+    p_e = epsilon / A  # explore
+    p_g = 1 - epsilon  # exploit
+    is_greedy_a = a == np.argmax(Q[s], axis=-1)
+    if is_greedy_a:
+        return p_g + p_e
+    else:
+        return p_e
 
 def isr(epsilon: float, Q: NDArray, action: int, state: NDArray) -> float:
     """
@@ -12,26 +23,12 @@ def isr(epsilon: float, Q: NDArray, action: int, state: NDArray) -> float:
 
     A = 2  # amount of actions A(s)
 
-    # Target Policy (greedy)
-    def pi(a: int, s: tuple[int, int, int, int]):
-        return a == np.argmax(Q[s], axis=-1)
-
-    # Behavior-policy (epsilon-greedy)
-    def b(a: int, s: tuple[int, int, int, int]):
-        p_e = epsilon / A  # explore
-        p_g = 1 - epsilon  # exploit
-        p_pi = pi(a, s)
-        if p_pi == 1:  # a=a*
-            return p_g + p_e
-        elif p_pi == 0:  # a!=a*
-            return p_e
-
     def ratio():
         a = action
         s = tuple(state)
-        if pi(a, s) == 0:
+        if p_pi(a, s, epsilon=epsilon) == 0:
             return 0
-        return pi(a, s) / b(a, s)
+        return p_pi(a, s) / p_pi(a, s, epsilon=epsilon)
 
     return ratio()
 
@@ -140,3 +137,13 @@ def q_learning(
     error = r + gamma * q_greedy * (1 - is_T) - Q[old_sa]
     Q[old_sa] = Q[old_sa] + alpha * error
     return Q
+
+def expedced_sarsa(
+    Q: NDArray[np.float64],
+    alpha: float,
+    gamma: float,
+    old_sa: tuple[int, int, int, int, int],
+    sa: tuple[int, int, int, int, int],
+    r: float,
+    is_T: bool,
+) -> NDArray:
