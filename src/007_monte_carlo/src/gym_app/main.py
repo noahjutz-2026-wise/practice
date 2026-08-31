@@ -7,7 +7,7 @@ from . import train
 entity = "tjno"
 project = "rl"
 mode = "online"
-group = "qlearning_batch1"
+group = "tmp"
 
 
 def experiment_eval(config: wandb.sdk.Config, model_name: str | None = None):
@@ -49,7 +49,7 @@ def experiment_train(config: wandb.sdk.Config, model_name: str | None = None):
 
 def main():
     config = {
-        "prediction_method": "q_learning",
+        "prediction_method": "expected_sarsa",
         "n_bins": (15, 15, 15, 15),
         "gamma": 0.9,  # Discount factor
         "epsilon": 0.1,  # Exploration rate
