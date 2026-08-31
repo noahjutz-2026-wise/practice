@@ -52,7 +52,7 @@ def main():
         "prediction_method": "double_q_learning",
         "n_bins": (5, 5, 8, 8),
         "gamma": 0.99,  # Discount factor
-        "epsilon": 0.05,  # Exploration rate
+        "epsilon": None,  # Exploration rate
         "alpha": 0.2,  # Step size
         "episodes": 2000,
         "log_every": 100,

@@ -48,6 +48,8 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
     last_Q1 = Q1.copy()
 
     for episode in range(episodes):
+        pi.step_episode()
+        b.step_episode()
         cum_reward = 0
         t = 1
         rewards = []

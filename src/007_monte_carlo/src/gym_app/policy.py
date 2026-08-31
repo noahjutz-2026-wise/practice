@@ -20,7 +20,7 @@ class Policy:
         self.epsilon = epsilon
         self.random = env.np_random
         self.Q = Q
-        self._t = 1
+        self._episode = 1
 
     def a(self, s: State) -> int:
         """
@@ -59,8 +59,8 @@ class Policy:
     def update(self, Q: NDArray) -> None:
         self.Q = Q
 
-    def step(self) -> None:
-        self._t += 1
+    def step_episode(self) -> None:
+        self._episode += 1
 
     def _greedy(self, s: State) -> int:
         q0, q1 = self.Q[tuple(s)]
@@ -71,8 +71,6 @@ class Policy:
         return self.random.integers(2)
 
     def _exploration_rate(self) -> float:
-        if type(self.epsilon) is float:
-            return self.epsilon
-        if self.epsilon is None:
-            return 1 / self.t
-        raise ValueError()
+        if self.epsilon is not None:
+            return float(self.epsilon)
+        return 1 / self._episode
