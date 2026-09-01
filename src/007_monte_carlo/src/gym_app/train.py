@@ -172,7 +172,7 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
                             (*observation, action),
                             rewards,
                             True,
-                            n_step_n,
+                            min(n_step_n, len(states)),
                         )
 
         if episode % log_every == 0:
