@@ -218,7 +218,7 @@ def n_step_sarsa(
     sa = (*states[-1], actions[-1])
     old_sa = (*states[0], actions[0])
     rho = 1
-    for s, a in zip(states, actions):
+    for s, a in zip(list(states)[1:], list(actions)[1:]):
         rho *= isr(pi, b, a, s)
     G = 0
     for i in range(n):
