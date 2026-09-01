@@ -145,16 +145,40 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
             if truncated or terminated:
                 break
 
-        states = np.array(states)
-        rewards = np.array(rewards)
-        actions = np.array(actions)
-
-        if task == "train" and prediction_method == "monte_carlo":
-            C, Q1 = prediction.monte_carlo(
-                rewards, states, actions, gamma, epsilon, C, Q1, pi, b
-            )
+        if task == "train":
+            match prediction_method:
+                case "monte_carlo":
+                    C, Q1 = prediction.monte_carlo(
+                        np.array(rewards),
+                        np.array(states),
+                        np.array(actions),
+                        gamma,
+                        epsilon,
+                        C,
+                        Q1,
+                        pi,
+                        b,
+                    )
+                case "n_step_sarsa":
+                    while len(states) > 1:
+                        states.popleft()
+                        rewards.popleft()
+                        actions.popleft()
+                        Q1 = prediction.n_step_sarsa(
+                            Q1,
+                            alpha,
+                            gamma,
+                            (*states[0], actions[0]),
+                            (*observation, action),
+                            rewards,
+                            True,
+                            n_step_n,
+                        )
 
         if episode % log_every == 0:
+            states = np.array(states)
+            rewards = np.array(rewards)
+            actions = np.array(actions)
             visited = (Q1 + Q2) != 0
             run.log(
                 {

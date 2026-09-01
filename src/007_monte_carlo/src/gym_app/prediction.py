@@ -1,3 +1,4 @@
+from collections import deque
 from collections.abc import Callable
 
 import numpy as np
@@ -193,7 +194,7 @@ def n_step_sarsa(
     gamma: float,
     old_sa: tuple[int, int, int, int, int],
     sa: tuple[int, int, int, int, int],
-    r: NDArray,
+    r: deque,
     is_T: bool,
     n: int,
 ) -> NDArray:
