@@ -219,7 +219,7 @@ def n_step_sarsa(
     old_sa = (*states[0], actions[0])
     rho = 1
     for s, a in zip(states, actions):
-        rho *= isr(pi, b, s, a)
+        rho *= isr(pi, b, a, s)
     G = 0
     for i in range(n):
         G += gamma**i * rewards[i]

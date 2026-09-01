@@ -126,15 +126,13 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
                     states.append(observation)
                     actions.append(action)
                     if len(rewards) == n_step_n:
-                        old_state = states[0]
-                        old_action = actions[0]
                         Q1 = prediction.n_step_sarsa(
                             Q1,
                             alpha,
                             gamma,
-                            (*old_state, old_action),
-                            (*new_observation, new_action),
                             rewards,
+                            actions,
+                            states,
                             truncated or terminated,
                             n_step_n,
                             pi,
@@ -173,9 +171,9 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
                             Q1,
                             alpha,
                             gamma,
-                            (*states[0], actions[0]),
-                            (*observation, action),
                             rewards,
+                            actions,
+                            states,
                             True,
                             min(n_step_n, len(rewards)),
                             pi,
