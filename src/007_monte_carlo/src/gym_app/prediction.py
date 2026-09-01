@@ -211,9 +211,6 @@ def n_step_sarsa(
     Returns:
         Q: (*n_bins, 2) next state_action value estimate
     """
-    if len(r) != n:
-        return Q
-
     G = 0
     for i in range(n):
         G += gamma**i * r[i]
