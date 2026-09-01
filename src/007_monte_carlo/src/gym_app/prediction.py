@@ -192,31 +192,40 @@ def n_step_sarsa(
     Q: NDArray[np.float64],
     alpha: float,
     gamma: float,
-    old_sa: tuple[int, int, int, int, int],
-    sa: tuple[int, int, int, int, int],
-    r: deque,
+    rewards: deque,
+    actions: deque,
+    states: deque,
     is_T: bool,
     n: int,
+    pi: Policy,
+    b: Policy,
 ) -> NDArray:
     """
     Args:
         Q: (*n_bins, 2) state-action value estimate
         alpha: Step size
         gamma: Discount factor
-        old_sa: state-action pair at step (t-n+1)
-        sa: state-action pair at step (t+1)
-        r: last n rewards (t-n+1,...,t+1)
+        rewards: last n rewards (t-n+1,...,t+1)
+        actions: last n actions
+        states: last n states
         is_T: True if this step is the last before termination
         n: Look n steps ahead
+        pi: Target policy
+        b: Behavior policy
     Returns:
         Q: (*n_bins, 2) next state_action value estimate
     """
+    sa = (*states[-1], actions[-1])
+    old_sa = (*states[0], actions[0])
+    rho = 1
+    for s, a in zip(states, actions):
+        rho *= isr(pi, b, s, a)
     G = 0
     for i in range(n):
-        G += gamma**i * r[i]
+        G += gamma**i * rewards[i]
     if not is_T:
         G += gamma**n * Q[sa]
 
-    Q[old_sa] += alpha * (G - Q[old_sa])
+    Q[old_sa] += alpha * rho * (G - Q[old_sa])
 
     return Q

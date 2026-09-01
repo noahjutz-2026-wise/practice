@@ -137,6 +137,8 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
                             rewards,
                             truncated or terminated,
                             n_step_n,
+                            pi,
+                            b,
                         )
 
             observation = new_observation
@@ -176,6 +178,8 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
                             rewards,
                             True,
                             min(n_step_n, len(rewards)),
+                            pi,
+                            b,
                         )
 
         if episode % log_every == 0:
