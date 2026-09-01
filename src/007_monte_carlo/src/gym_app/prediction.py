@@ -191,7 +191,7 @@ def n_step_td(
     Q: NDArray[np.float64],
     alpha: float,
     gamma: float,
-    old_sa: tuple[int, int, int, int],
+    old_sa: tuple[int, int, int, int, int],
     sa: tuple[int, int, int, int, int],
     r: NDArray,
     is_T: bool,
@@ -218,6 +218,6 @@ def n_step_td(
     if not is_T:
         G += gamma**n * Q[sa]
 
-    Q[old_sa] += alpha * (G - Q[sa])
+    Q[old_sa] += alpha * (G - Q[old_sa])
 
     return Q
