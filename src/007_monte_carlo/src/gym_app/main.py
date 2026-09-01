@@ -7,7 +7,7 @@ from . import train
 entity = "tjno"
 project = "rl"
 mode = "online"
-group = "double_q_learning_batch4"
+group = "n_step_sarsa_batch1"
 
 
 def experiment_eval(config: wandb.sdk.Config, model_name: str | None = None):
@@ -25,6 +25,7 @@ def experiment_train(config: wandb.sdk.Config, model_name: str | None = None):
     n_runs = 20
 
     for r in range(n_runs):
+        config["seed"] = r
         print(f"Run={r}")
         with wandb.init(
             mode=mode,
