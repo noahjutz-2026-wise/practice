@@ -49,7 +49,7 @@ def experiment_train(config: wandb.sdk.Config, model_name: str | None = None):
 
 def main():
     config = {
-        "prediction_method": "double_q_learning",
+        "prediction_method": "n_step_sarsa",
         "n_bins": (5, 5, 8, 8),
         "gamma": 0.99,  # Discount factor
         "epsilon": None,  # Exploration rate
@@ -57,6 +57,7 @@ def main():
         "episodes": 2000,
         "log_every": 100,
         "seed": 0,
+        "n_step_n": 4,
     }
 
     experiment_train(config)

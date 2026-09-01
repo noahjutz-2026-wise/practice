@@ -1,4 +1,5 @@
 import itertools
+from collections import deque
 
 import gymnasium as gym
 import numpy as np
@@ -31,6 +32,7 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
     task = run.config["task"]
     prediction_method = run.config["prediction_method"]
     seed = run.config["seed"]
+    n_step_n = run.config["n_step_n"]
 
     env = gym.make("CartPole-v1", render_mode=None)
     env = DiscreteCartPole(env, n_bins)
@@ -56,6 +58,10 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
         rewards = []
         states = []
         actions = []
+        if prediction_method == "n_step_sarsa":
+            rewards = deque((), n_step_n)
+            states = deque((), n_step_n)
+            actions = deque((), n_step_n)
         observation, info = env.reset(seed=seed)
         action = b.a(tuple(observation))
         for step in itertools.count():
@@ -112,6 +118,22 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
                         truncated or terminated,
                         env.np_random,
                         Q2=Q2,
+                    )
+                case "n_step_sarsa":
+                    rewards.append(reward)
+                    states.append(observation)
+                    actions.append(action)
+                    old_state = states[0]
+                    old_action = actions[0]
+                    Q1 = prediction.n_step_sarsa(
+                        Q1,
+                        alpha,
+                        gamma,
+                        (*old_state, old_action),
+                        (*new_observation, new_action),
+                        rewards,
+                        truncated or terminated,
+                        n_step_n,
                     )
 
             observation = new_observation

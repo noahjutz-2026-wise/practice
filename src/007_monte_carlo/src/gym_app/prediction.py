@@ -187,7 +187,7 @@ def expected_sarsa(
     return Q
 
 
-def n_step_td(
+def n_step_sarsa(
     Q: NDArray[np.float64],
     alpha: float,
     gamma: float,
@@ -210,7 +210,8 @@ def n_step_td(
     Returns:
         Q: (*n_bins, 2) next state_action value estimate
     """
-    r = r[-n:]
+    if len(r) != n:
+        return Q
 
     G = 0
     for i in range(n):
