@@ -62,6 +62,9 @@ class Policy:
     def step_episode(self) -> None:
         self._episode += 1
 
+    def reset(self, env: Env) -> None:
+        self.random = env.np_random
+
     def _greedy(self, s: State) -> int:
         q0, q1 = self.Q[tuple(s)]
         if q0 > q1:

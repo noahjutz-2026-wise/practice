@@ -63,6 +63,8 @@ def train(run: wandb.Run, Q1: NDArray | None = None) -> NDArray:
             states = deque((), n_step_n)
             actions = deque((), n_step_n)
         observation, info = env.reset(seed=seed if episode == 0 else None)
+        pi.reset(env)
+        b.reset(env)
         action = b.a(tuple(observation))
         for step in itertools.count():
             pi.update(Q1 + Q2)
