@@ -1,22 +1,30 @@
-from typing import cast
-
 import gymnasium as gym
-import numpy as np
-from numpy.typing import NDArray
+from huggingface_sb3 import package_to_hub
+from stable_baselines3 import PPO
+from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.monitor import Monitor
 
 
 def main():
-    env = cast(gym.Env[NDArray[np.float64], int], gym.make("LunarLander-v3"))  # pyright: ignore[reportUnknownMemberType]
-    _observation, _info = env.reset()
-    print("_____OBSERVATION SPACE_____ \n")
-    print("Observation Space Shape", env.observation_space.shape)
-    print(
-        "Sample observation", env.observation_space.sample()
-    )  # Get a random observation
-    for _ in range(20):
-        action = env.action_space.sample()
-        _observation, _reward, terminated, truncated, _info = env.step(action)
-        if terminated or truncated:
-            _observation, _info = env.reset()
+    env = gym.make("LunarLander-v3")
+    model = PPO("MlpPolicy", env, verbose=1)
+    _ = model.learn(total_timesteps=int(2e5))
 
-    env.close()
+    eval_env = Monitor(gym.make("LunarLander-v3", render_mode="human"))
+
+    mean_reward, std_reward = evaluate_policy(
+        model, eval_env, n_eval_episodes=10, deterministic=True
+    )
+    print(f"mean_reward={mean_reward:.2f} +/- {std_reward}")
+
+    print("packaging")
+
+    _ = package_to_hub(
+        model=model,
+        model_name="ppo_lunarlander_v3",
+        model_architecture="PPO",
+        env_id="LunarLander-v3",
+        eval_env=eval_env,
+        repo_id="noahjutz/ppo_lunarlander_3",
+        commit_message="commit",
+    )
