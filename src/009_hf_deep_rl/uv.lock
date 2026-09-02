@@ -340,6 +340,7 @@ source = { editable = "." }
 dependencies = [
     { name = "gymnasium", extra = ["box2d"] },
     { name = "huggingface-sb3" },
+    { name = "shimmy" },
     { name = "stable-baselines3", extra = ["extra"] },
     { name = "swig" },
 ]
@@ -348,6 +349,7 @@ dependencies = [
 requires-dist = [
     { name = "gymnasium", extras = ["box2d"], specifier = ">=1.3.0" },
     { name = "huggingface-sb3", specifier = ">=3.0" },
+    { name = "shimmy", specifier = ">=2.0.1" },
     { name = "stable-baselines3", extras = ["extra"], specifier = ">=2.9.0" },
     { name = "swig", specifier = ">=4,<4.5" },
 ]
@@ -920,6 +922,19 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/6d/44/f5da03a8ef95d369145c5bb53050e7877c9f3d312e128605fd9504829143/setuptools-84.0.0.tar.gz", hash = "sha256:f4695c21257f0d9b537ec2692c941d02ee143b7cc1276941349a546573b2ef73", size = 1168449, upload-time = "2026-08-08T18:27:58.365Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl", hash = "sha256:51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670", size = 818216, upload-time = "2026-08-08T18:27:56.719Z" },
+]
+
+[[package]]
+name = "shimmy"
+version = "2.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "gymnasium" },
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/44/72/8b1774448fba768b8d30bebf4deae3c301138522135a4ff4ae8e6a4109ad/shimmy-2.0.1.tar.gz", hash = "sha256:8770a697dd1272e433a852f7efae9faf826b10b33e7301cc2ca1a3b22646ad0c", size = 32150, upload-time = "2026-04-10T10:56:36.487Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/89/40/a552f38102735e07966040a4d74134ae8334077776ea81fcc9a48432e716/shimmy-2.0.1-py3-none-any.whl", hash = "sha256:408535a906b01911f896da60c490c4195e0035db051125bb0bc05c0094487279", size = 30854, upload-time = "2026-04-10T10:56:35.506Z" },
 ]
 
 [[package]]
