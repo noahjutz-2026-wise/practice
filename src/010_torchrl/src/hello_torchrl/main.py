@@ -1,10 +1,8 @@
-from torchrl.envs import GymEnv, step_mdp
+from torchrl.envs import GymEnv, StepCounter, TransformedEnv, step_mdp
 
 
 def main():
     env = GymEnv("Pendulum-v1")
-    reset = env.reset()
-    reset_with_action = env.rand_action(reset)
-    stepped_data = env.step(reset_with_action)
-    data = step_mdp(stepped_data)
-    print(data)
+    env = TransformedEnv(env, StepCounter(max_steps=10))
+    data = env.rollout(max_steps=100)
+    print(data["next"]["truncated"])
