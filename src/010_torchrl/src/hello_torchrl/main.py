@@ -13,9 +13,10 @@ def _env_creator(ctx):
 
     base_env = gym.make("FlappyBird-v0", render_mode="rgb_array", audio_on=False)
     pixel_env = gym.wrappers.AddRenderObservation(base_env)
+    human_env = gym.wrappers.HumanRendering(pixel_env)
     return NormalizedImageEnv(
         resize_v1(  # resize to 64x64 and normalize images
-            pixel_env, x_size=64, y_size=64
+            human_env, x_size=64, y_size=64
         )
     )
 
