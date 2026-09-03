@@ -1,0 +1,19 @@
+[project]
+name = "hello_torchrl"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Noah Jutz", email = "git@noahjutz.anonaddy.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "torchrl>=0.13.3",
+]
+
+[project.scripts]
+trl = "hello_torchrl.main:main"
+
+[build-system]
+requires = ["uv_build>=0.12.9,<0.13.0"]
+build-backend = "uv_build"
