@@ -1,4 +1,5 @@
 import torch
+from ray.rllib.algorithms.ppo import PPOConfig
 from tensordict.nn import TensorDictModule
 from torchrl.envs import GymEnv, StepCounter, TransformedEnv, step_mdp
 
