@@ -1,15 +1,38 @@
-import torch
+from pprint import pprint
+
 from ray.rllib.algorithms.ppo import PPOConfig
-from tensordict.nn import TensorDictModule
-from torchrl.envs import GymEnv, StepCounter, TransformedEnv, step_mdp
+
+# Create a config instance for the PPO algorithm.
+config = PPOConfig().environment("Pendulum-v1")
+
+config.env_runners(num_env_runners=2)
+
+config.training(
+    lr=0.0002,
+    train_batch_size_per_learner=2000,
+    num_epochs=10,
+)
+
+ppo = config.build_algo()
+for _ in range(4):
+    pprint(ppo.train())
+
+checkpoint_path = ppo.save_to_path()
+
+print("eval")
+
+config.evaluation(
+    evaluation_interval=1,
+    evaluation_num_env_runners=2,
+    evaluation_duration_unit="episodes",
+    evaluation_duration=10,
+)
+
+ppo_with_evaluation = config.build_algo()
+
+for _ in range(3):
+    pprint(ppo_with_evaluation.train())
 
 
 def main():
-    env = GymEnv("Pendulum-v1")
-    env = TransformedEnv(env, StepCounter(max_steps=10))
-
-    module = torch.nn.LazyLinear(out_features=env.action_spec.shape[-1])
-    policy = TensorDictModule(module, in_keys=["observation"], out_keys=["action"])
-
-    rollout = env.rollout(max_steps=100, policy=policy)
-    print(rollout)
+    pass

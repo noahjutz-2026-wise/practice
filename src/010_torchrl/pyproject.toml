@@ -14,6 +14,9 @@ dependencies = [
     "torchrl>=0.13.3",
 ]
 
+[tool.basedpyright]
+typeCheckingMode = "off"
+
 [project.scripts]
 trl = "hello_torchrl.main:main"
 
