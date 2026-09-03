@@ -1,2 +1,6 @@
+import torch
+
+
 def main():
-    print("X")
+    d = torch.tensor([[1, 2], [3, 4]])
+    print(d)
