@@ -364,7 +364,9 @@ source = { editable = "." }
 dependencies = [
     { name = "flappy-bird-gymnasium" },
     { name = "gymnasium" },
+    { name = "pettingzoo" },
     { name = "ray", extra = ["rllib"] },
+    { name = "supersuit" },
     { name = "tensordict" },
     { name = "torchrl" },
 ]
@@ -373,7 +375,9 @@ dependencies = [
 requires-dist = [
     { name = "flappy-bird-gymnasium", specifier = ">=0.4.0" },
     { name = "gymnasium", specifier = ">=1.2.2" },
+    { name = "pettingzoo", specifier = ">=1.27.0" },
     { name = "ray", extras = ["rllib"], specifier = ">=2.58.0" },
+    { name = "supersuit", specifier = ">=3.11.0" },
     { name = "tensordict", specifier = ">=0.13.0" },
     { name = "torchrl", specifier = ">=0.13.3" },
 ]
@@ -934,6 +938,20 @@ wheels = [
 ]
 
 [[package]]
+name = "pettingzoo"
+version = "1.27.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "gymnasium" },
+    { name = "numpy" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e5/14/2c089f488135e699db7d473490b6ceb84df5b470b4bc64f435d9b42041e9/pettingzoo-1.27.0.tar.gz", hash = "sha256:d61210fff2ba59f54e191796dc8b16b37d201137b28882f4c96dd7121a749033", size = 472105, upload-time = "2026-08-13T18:02:41.809Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7b/1f/ff1bebbe1fc168b6435b482a34d9757249c9da1b14ebc61868cc19998cca/pettingzoo-1.27.0-py3-none-any.whl", hash = "sha256:075a6ab7c32d32d9a674f1af395010198bf09c172341aa38fa5415461601ac61", size = 668492, upload-time = "2026-08-13T18:02:40.528Z" },
+]
+
+[[package]]
 name = "pillow"
 version = "12.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1297,6 +1315,20 @@ wheels = [
 ]
 
 [[package]]
+name = "supersuit"
+version = "3.11.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "gymnasium" },
+    { name = "numpy" },
+    { name = "tinyscaler" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/16/a1/7b807a152e4d4ad2fb5ac1b34300adbfc64f3cd30e23a79a46412e0804d6/supersuit-3.11.0.tar.gz", hash = "sha256:fbf1aff42bd084945aa86205af750b6cf5e7bbd864ddcd61d90142267a96afae", size = 34798, upload-time = "2026-05-31T22:27:37.221Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6d/46/c8bfcd9b193fd7a452a10c5086b2c633dacfadd15524473615152e818267/supersuit-3.11.0-py3-none-any.whl", hash = "sha256:d8cbbe27d79c427eaa90102b866673cbb03812f652c36fc7985029bffdb0c587", size = 50574, upload-time = "2026-05-31T22:27:35.435Z" },
+]
+
+[[package]]
 name = "sympy"
 version = "1.14.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1348,6 +1380,20 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/0c/26/f29d7543db47c21eddf87c95ccfeb059e508250d8a8689e7c8842bcd31a4/tensordict-0.13.0-cp313-cp313t-manylinux_2_28_aarch64.whl", hash = "sha256:731215d5a4e63fe834cc082de7555e1d5207b7be26d83f53906963ec36bf8a62", size = 557189, upload-time = "2026-06-04T14:47:11.588Z" },
     { url = "https://files.pythonhosted.org/packages/d2/91/8847964100950bee174f4a6dd5839fa985a95b8e9eb96a3f012b1c6bee66/tensordict-0.13.0-cp313-cp313t-manylinux_2_28_x86_64.whl", hash = "sha256:6121b672ae021739f56a5e03193b2650155667f97c5121b7948a3b1ff047ec2d", size = 561063, upload-time = "2026-06-04T14:47:13.049Z" },
     { url = "https://files.pythonhosted.org/packages/81/51/d9053993fc45b613522dc6425a04bed7947fecd65fed8f0a35a884e2f4af/tensordict-0.13.0-cp313-cp313t-win_amd64.whl", hash = "sha256:fd2f54af8293bd8d0472fe49c6940740a96366c02b4dba7d9838dde9ccc2e654", size = 619464, upload-time = "2026-06-04T14:47:14.457Z" },
+]
+
+[[package]]
+name = "tinyscaler"
+version = "1.2.8"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/0d/59/6b6495fe9bb3153306a4bd6dd24c78ff74eaf64f90fc6e545ede0574cfbe/tinyscaler-1.2.8.tar.gz", hash = "sha256:0ce3b77562f1db74b2035ccaf62807af043333ce655e71effd6ec85fbf8ded06", size = 156935, upload-time = "2024-08-02T19:25:10.976Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4b/65/06fa456d375b71672affd292dd79f199b21a574eb0501afa142f85133b99/tinyscaler-1.2.8-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:fcafd6a8b7ac8c8eabc560f99f987e3e9c00b32a5f3472b28ee865db9bf264b2", size = 179781, upload-time = "2024-08-02T19:24:52.129Z" },
+    { url = "https://files.pythonhosted.org/packages/b7/cf/528a73de4ad128de99bf7cc0e80f236aeeb36fda1e2768a7eb73210a91ff/tinyscaler-1.2.8-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7474fe93740b0aa045e4e2ad60f8df6d5d570c4ea903c6d63ca3868efd8f4e22", size = 563642, upload-time = "2024-08-02T19:24:54.1Z" },
+    { url = "https://files.pythonhosted.org/packages/68/d0/0b0abfde6acdf79b41ea685067a52d3e47f3b1fb4a0f4f49d9c6f281a3c7/tinyscaler-1.2.8-cp312-cp312-win_amd64.whl", hash = "sha256:6a7c18d9c082f30193bd23a6eb8ad84d2ee9b224138c8c25a76db96cba71a473", size = 83779, upload-time = "2024-08-02T19:24:56.186Z" },
 ]
 
 [[package]]

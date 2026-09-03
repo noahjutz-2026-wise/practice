@@ -10,7 +10,9 @@ requires-python = ">=3.12,<3.14"
 dependencies = [
     "flappy-bird-gymnasium>=0.4.0",
     "gymnasium>=1.2.2",
+    "pettingzoo>=1.27.0",
     "ray[rllib]>=2.58.0",
+    "supersuit>=3.11.0",
     "tensordict>=0.13.0",
     "torchrl>=0.13.3",
 ]
