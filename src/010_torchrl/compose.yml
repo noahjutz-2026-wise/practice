@@ -12,6 +12,21 @@ services:
       - raynet
     volumes:
       - ray-tmp:/tmp/ray
+  grafana:
+    image: docker.io/grafana/grafana:13.0.8
+    depends_on:
+      dreamer:
+        condition: service_healthy
+    command: |
+      --config=/tmp/ray/session_latest/metrics/grafana/grafana.ini web
+    environment:
+      - GF_PATHS_PROVISIONING=/tmp/ray/session_latest/metrics/grafana/provisioning
+    ports:
+      - 3000:3000
+    networks:
+      - raynet
+    volumes:
+      - ray-tmp:/tmp/ray
   dreamer:
     build: .
     deploy:
@@ -23,6 +38,8 @@ services:
               capabilities: [gpu]
     environment:
       RAY_PROMETHEUS_HOST: http://prom:9090
+      RAY_GRAFANA_HOST: http://grafana:3000
+      RAY_GRAFANA_IFRAME_HOST: http://127.0.0.1:3000
     healthcheck:
       test: uv run python -c 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8265/api/version")'
     shm_size: 4.64gb
