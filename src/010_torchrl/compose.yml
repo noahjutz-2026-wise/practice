@@ -14,6 +14,13 @@ services:
       - ray-tmp:/tmp/ray
   dreamer:
     build: .
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     healthcheck:
       test: uv run ray health-check
     shm_size: 4.64gb

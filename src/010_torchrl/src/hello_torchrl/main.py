@@ -11,12 +11,12 @@ def _env_creator(ctx):
     from ray.rllib.env.wrappers.atari_wrappers import NormalizedImageEnv
     from supersuit.generic_wrappers import resize_v1
 
-    base_env = gym.make("FlappyBird-v0", render_mode="rgb_array", audio_on=False)
-    pixel_env = gym.wrappers.AddRenderObservation(base_env)
-    human_env = gym.wrappers.HumanRendering(pixel_env)
+    env = gym.make("FlappyBird-v0", render_mode="rgb_array", audio_on=False)
+    env = gym.wrappers.AddRenderObservation(env)
+    # env = gym.wrappers.HumanRendering(env)
     return NormalizedImageEnv(
         resize_v1(  # resize to 64x64 and normalize images
-            human_env, x_size=64, y_size=64
+            env, x_size=64, y_size=64
         )
     )
 
@@ -65,7 +65,7 @@ def main():
     results = tune.Tuner(
         trainable="DreamerV3",
         param_space=config,
-        run_config=tune.RunConfig(stop={"training_iteration": 1}),
+        # run_config=tune.RunConfig(stop={"training_iteration": 1}),
     ).fit()
     ray.shutdown()
     return 0
