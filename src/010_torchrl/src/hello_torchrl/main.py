@@ -24,7 +24,10 @@ def _env_creator(ctx):
 def main():
     ray_tmp = Path.home() / ".ray_tmp"
     ray_tmp.mkdir(parents=True, exist_ok=True)
-    ray.init(_temp_dir=str(ray_tmp))
+    ctx = ray.init(_temp_dir=str(ray_tmp))
+
+    print("DASHBOARD URL:")
+    print(ctx.dashboard_url)
 
     # Register the FlappyBird-rgb-v0 env including necessary wrappers via the
     # `tune.register_env()` API.
@@ -54,4 +57,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
