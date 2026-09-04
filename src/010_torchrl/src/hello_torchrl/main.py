@@ -22,12 +22,10 @@ def _env_creator(ctx):
 
 
 def main():
-    # ray_tmp = Path.home() / ".ray_tmp"
-    # ray_tmp.mkdir(parents=True, exist_ok=True)
     ctx = ray.init(
-        # _temp_dir=str(ray_tmp),
         object_store_memory=1024 * 1024 * 1024,  # Cap Plasma object store at 1GB
         runtime_env={},
+        dashboard_host="0.0.0.0",
     )
 
     print("DASHBOARD URL:")
