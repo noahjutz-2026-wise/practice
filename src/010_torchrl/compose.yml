@@ -1,0 +1,32 @@
+services:
+  prom:
+    image: docker.io/prom/prometheus:v3.14.0-distroless
+    depends_on:
+      dreamer:
+        condition: service_healthy
+    command: |
+      --config.file=/tmp/ray/session_latest/metrics/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    networks:
+      - raynet
+    volumes:
+      - ray-tmp:/tmp/ray
+  dreamer:
+    build: .
+    healthcheck:
+      test: uv run ray health-check
+    shm_size: 4.64gb
+    ports:
+      - 8265:8265
+    networks:
+      - raynet
+    volumes:
+      - ray-tmp:/tmp/ray
+
+
+volumes:
+  ray-tmp:
+
+networks:
+  raynet:
