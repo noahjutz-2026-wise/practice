@@ -22,9 +22,13 @@ def _env_creator(ctx):
 
 
 def main():
-    ray_tmp = Path.home() / ".ray_tmp"
-    ray_tmp.mkdir(parents=True, exist_ok=True)
-    ctx = ray.init(_temp_dir=str(ray_tmp))
+    # ray_tmp = Path.home() / ".ray_tmp"
+    # ray_tmp.mkdir(parents=True, exist_ok=True)
+    ctx = ray.init(
+        # _temp_dir=str(ray_tmp),
+        object_store_memory=1024 * 1024 * 1024,  # Cap Plasma object store at 1GB
+        runtime_env={},
+    )
 
     print("DASHBOARD URL:")
     print(ctx.dashboard_url)
@@ -38,10 +42,22 @@ def main():
         DreamerV3Config()
         # set the env to the pre-registered string
         .environment("flappy-bird")
-        # play around with the insanely high number of hyperparameters for DreamerV3 ;)
+        .env_runners(
+            num_env_runners=0,
+            num_envs_per_env_runner=1,
+        )
+        .learners(
+            num_learners=0,
+        )
         .training(
-            model_size="S",
-            training_ratio=1024,
+            model_size="XS",
+            training_ratio=64,
+            batch_size_B=8,
+            batch_length_T=32,
+            replay_buffer_config={
+                "type": "EpisodeReplayBuffer",
+                "capacity": 10000,
+            },
         )
     )
 
