@@ -6,7 +6,7 @@ from ray.rllib.algorithms.dreamerv3.dreamerv3 import DreamerV3Config
 
 
 def _env_creator(ctx):
-    import flappy_bird_gymnasium  # doctest: +SKIP
+    import flappy_bird_gymnasium  # noqa: F401
     import gymnasium as gym
     from ray.rllib.env.wrappers.atari_wrappers import NormalizedImageEnv
     from supersuit.generic_wrappers import resize_v1
