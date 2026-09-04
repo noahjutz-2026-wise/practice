@@ -21,6 +21,8 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
+    # environment:
+    #   RAY_PROMETHEUS_HOST: http://prom:9090
     healthcheck:
       test: uv run ray health-check
     shm_size: 4.64gb

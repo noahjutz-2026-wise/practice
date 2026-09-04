@@ -23,6 +23,7 @@ def _env_creator(ctx):
 
 def main():
     ctx = ray.init(
+        address="local",
         object_store_memory=1024 * 1024 * 1024,  # Cap Plasma object store at 1GB
         runtime_env={},
         dashboard_host="0.0.0.0",
