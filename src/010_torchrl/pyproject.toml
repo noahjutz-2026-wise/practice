@@ -15,10 +15,12 @@ dependencies = [
     "supersuit>=3.11.0",
     "tensordict>=0.13.0",
     "torchrl>=0.13.3",
+    "wandb>=0.29.0",
 ]
 
 [tool.basedpyright]
-typeCheckingMode = "off"
+typeCheckingMode = "recommended"
+allowedUntypedLibraries = ["flappy_bird_gymnasium", "supersuit", "gymnasium", "ray"]
 
 [project.scripts]
 trl = "hello_torchrl.main:main"

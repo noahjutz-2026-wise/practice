@@ -1,10 +1,15 @@
+import os
+
 import ray
 from ray import tune
+from ray.air.integrations.wandb import WandbLoggerCallback
 from ray.rllib.algorithms.dreamerv3.dreamerv3 import DreamerV3Config
+
+WANDB_KEY = os.environ.get("WANDB_KEY")
 
 
 def _env_creator(ctx):
-    import flappy_bird_gymnasium  # noqa: F401
+    import flappy_bird_gymnasium  # pyright: ignore[reportUnusedImport]
     import gymnasium as gym
     from ray.rllib.env.wrappers.atari_wrappers import NormalizedImageEnv
     from supersuit.generic_wrappers import resize_v1
@@ -52,7 +57,14 @@ def main():
     results = tune.Tuner(
         trainable="DreamerV3",
         param_space=config,
-        # run_config=tune.RunConfig(stop={"training_iteration": 1}),
+        run_config=tune.RunConfig(
+            callbacks=[
+                WandbLoggerCallback(
+                    project="tjno/ray_dreamer", api_key=WANDB_KEY, log_config=True
+                )
+            ],
+            stop={"training_iteration": 100},
+        ),
     ).fit()
     ray.shutdown()
     return 0

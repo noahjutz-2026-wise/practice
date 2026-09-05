@@ -40,6 +40,8 @@ services:
       RAY_PROMETHEUS_HOST: http://prom:9090
       RAY_GRAFANA_HOST: http://grafana:3000
       RAY_GRAFANA_IFRAME_HOST: http://127.0.0.1:3000
+    env_file:
+      .env
     healthcheck:
       test: uv run python -c 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8265/api/version")'
     shm_size: 4.64gb
