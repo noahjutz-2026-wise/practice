@@ -4,6 +4,7 @@ import ray
 from ray import tune
 from ray.air.integrations.wandb import WandbLoggerCallback
 from ray.rllib.algorithms.dreamerv3.dreamerv3 import DreamerV3Config
+from ray.tune import CheckpointConfig
 
 WANDB_API_KEY = os.environ.get("WANDB_KEY") or os.environ.get("WANDB_API_KEY")
 
@@ -46,7 +47,7 @@ def main():
         )
         .training(
             model_size="XS",
-            training_ratio=64,
+            training_ratio=2,
             batch_size_B=8,
             batch_length_T=32,
             replay_buffer_config={
@@ -60,6 +61,10 @@ def main():
         trainable="DreamerV3",
         param_space=config,
         run_config=tune.RunConfig(
+            storage_path="/var/tmp/ray_results",
+            checkpoint_config=CheckpointConfig(
+                checkpoint_frequency=10, checkpoint_at_end=True, num_to_keep=2
+            ),
             callbacks=[
                 WandbLoggerCallback(
                     project="ray_dreamer",
@@ -68,7 +73,7 @@ def main():
                     log_config=True,
                 )
             ],
-            stop={"training_iteration": 100},
+            # stop={"training_iteration": 100},
         ),
     ).fit()
 
