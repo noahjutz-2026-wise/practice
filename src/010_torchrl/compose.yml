@@ -20,6 +20,7 @@ services:
     healthcheck:
       test: python -c 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8265/api/version")'
     shm_size: 4.64gb
+    userns_mode: keep-id
     ports:
       - 8265:8265
       - 6379:6379
