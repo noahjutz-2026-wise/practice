@@ -5,7 +5,7 @@ from ray import tune
 from ray.air.integrations.wandb import WandbLoggerCallback
 from ray.rllib.algorithms.dreamerv3.dreamerv3 import DreamerV3Config
 
-WANDB_KEY = os.environ.get("WANDB_KEY")
+WANDB_KEY = os.environ.get("WANDB_KEY") or os.environ.get("WANDB_API_KEY")
 
 
 def _env_creator(ctx):
@@ -25,11 +25,13 @@ def _env_creator(ctx):
 
 
 def main():
+    ray_temp_dir = os.environ.get("RAY_TEMP_DIR")
     ctx = ray.init(
         address="local",
         object_store_memory=1024 * 1024 * 1024,  # Cap Plasma object store at 1GB
         runtime_env={},
         dashboard_host="0.0.0.0",
+        _temp_dir=ray_temp_dir,
     )
     tune.register_env("flappy-bird", _env_creator)
     config = (
@@ -60,7 +62,10 @@ def main():
         run_config=tune.RunConfig(
             callbacks=[
                 WandbLoggerCallback(
-                    project="tjno/ray_dreamer", api_key=WANDB_KEY, log_config=True
+                    project="ray_dreamer",
+                    entity="tjno",
+                    api_key=WANDB_KEY,
+                    log_config=True,
                 )
             ],
             stop={"training_iteration": 100},
