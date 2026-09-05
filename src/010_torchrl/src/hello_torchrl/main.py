@@ -43,6 +43,7 @@ def main():
         )
         .learners(
             num_learners=0,
+            num_gpus_per_learner=1,
         )
         .training(
             model_size="XS",
