@@ -1,8 +1,32 @@
 services:
-  prom:
+  ray-head:
+    image: docker.io/rayproject/ray:2.58.0-py313-gpu
+    command: ray start --head --block --dashboard-host 0.0.0.0 --temp-dir ${RAY_TEMP_DIR}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      RAY_PROMETHEUS_HOST: http://prometheus:9090
+      RAY_GRAFANA_HOST: http://grafana:3000
+      RAY_GRAFANA_IFRAME_HOST: http://127.0.0.1:3000
+      RAY_TEMP_DIR: ${RAY_TEMP_DIR}
+    healthcheck:
+      test: python -c 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8265/api/version")'
+    shm_size: 4.64gb
+    ports:
+      - 8265:8265
+    networks:
+      - raynet
+    volumes:
+      - ray-tmp:${RAY_TEMP_DIR}
+  prometheus:
     image: docker.io/prom/prometheus:v3.14.0-distroless
     depends_on:
-      dreamer:
+      ray-head:
         condition: service_healthy
     command:
       - "--config.file=${RAY_TEMP_DIR}/session_latest/metrics/prometheus/prometheus.yml"
@@ -15,7 +39,7 @@ services:
   grafana:
     image: docker.io/grafana/grafana:13.0.8
     depends_on:
-      dreamer:
+      ray-head:
         condition: service_healthy
     command:
       - "--config=${RAY_TEMP_DIR}/session_latest/metrics/grafana/grafana.ini"
@@ -28,32 +52,6 @@ services:
       - raynet
     volumes:
       - ray-tmp:${RAY_TEMP_DIR}
-  dreamer:
-    build: .
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
-    environment:
-      RAY_PROMETHEUS_HOST: http://prom:9090
-      RAY_GRAFANA_HOST: http://grafana:3000
-      RAY_GRAFANA_IFRAME_HOST: http://127.0.0.1:3000
-      RAY_TEMP_DIR: ${RAY_TEMP_DIR}
-    env_file:
-      .env
-    healthcheck:
-      test: uv run python -c 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8265/api/version")'
-    shm_size: 4.64gb
-    ports:
-      - 8265:8265
-    networks:
-      - raynet
-    volumes:
-      - ray-tmp:${RAY_TEMP_DIR}
-
 
 volumes:
   ray-tmp:

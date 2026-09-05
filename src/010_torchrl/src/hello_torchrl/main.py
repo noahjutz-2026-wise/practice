@@ -6,6 +6,7 @@ from ray.air.integrations.wandb import WandbLoggerCallback
 from ray.rllib.algorithms.dreamerv3.dreamerv3 import DreamerV3Config
 
 WANDB_KEY = os.environ.get("WANDB_KEY") or os.environ.get("WANDB_API_KEY")
+RAY_TEMP_DIR = os.environ.get("RAY_TEMP_DIR")
 
 
 def _env_creator(ctx):
@@ -25,7 +26,6 @@ def _env_creator(ctx):
 
 
 def main():
-    ray_temp_dir = os.environ.get("RAY_TEMP_DIR")
     ctx = ray.init(
         address="local",
         object_store_memory=1024 * 1024 * 1024,  # Cap Plasma object store at 1GB
