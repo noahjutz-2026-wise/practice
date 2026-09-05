@@ -1,0 +1,19 @@
+[project]
+name = "hello_mlflow"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Noah Jutz", email = "git@noahjutz.anonaddy.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "mlflow>=3.16.0",
+]
+
+[project.scripts]
+mlf = "hello_mlflow.main:main"
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"
