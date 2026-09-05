@@ -5,14 +5,17 @@ from ray import tune
 from ray.air.integrations.wandb import WandbLoggerCallback
 from ray.rllib.algorithms.dreamerv3.dreamerv3 import DreamerV3Config
 
-WANDB_KEY = os.environ.get("WANDB_KEY") or os.environ.get("WANDB_API_KEY")
+WANDB_API_KEY = os.environ.get("WANDB_KEY") or os.environ.get("WANDB_API_KEY")
 
 
 def _env_creator(ctx):
-    import flappy_bird_gymnasium  # pyright: ignore[reportUnusedImport]
     import gymnasium as gym
     from ray.rllib.env.wrappers.atari_wrappers import NormalizedImageEnv
     from supersuit.generic_wrappers import resize_v1
+
+    from hello_torchrl.flappy_bird import (  # pyright: ignore[reportMissingTypeStubs]
+        flappy_bird_gymnasium,  # pyright: ignore[reportUnusedImport]  # noqa: F401
+    )
 
     env = gym.make("FlappyBird-v0", render_mode="rgb_array", audio_on=False)
     env = gym.wrappers.AddRenderObservation(env)
@@ -61,7 +64,7 @@ def main():
                 WandbLoggerCallback(
                     project="ray_dreamer",
                     entity="tjno",
-                    api_key=WANDB_KEY,
+                    api_key=WANDB_API_KEY,
                     log_config=True,
                 )
             ],
