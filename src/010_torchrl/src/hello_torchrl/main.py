@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import ray
 from ray import tune
 from ray.rllib.algorithms.dreamerv3.dreamerv3 import DreamerV3Config
@@ -28,18 +26,9 @@ def main():
         runtime_env={},
         dashboard_host="0.0.0.0",
     )
-
-    print("DASHBOARD URL:")
-    print(ctx.dashboard_url)
-
-    # Register the FlappyBird-rgb-v0 env including necessary wrappers via the
-    # `tune.register_env()` API.
     tune.register_env("flappy-bird", _env_creator)
-
-    # Define the `config` variable to use for training.
     config = (
         DreamerV3Config()
-        # set the env to the pre-registered string
         .environment("flappy-bird")
         .env_runners(
             num_env_runners=0,
@@ -60,7 +49,6 @@ def main():
         )
     )
 
-    # Run the tuner job with a 1-iteration limit for testing.
     results = tune.Tuner(
         trainable="DreamerV3",
         param_space=config,
