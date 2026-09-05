@@ -1,0 +1,19 @@
+[project]
+name = "hello_ray"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Noah Jutz", email = "git@noahjutz.anonaddy.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "ray>=2.58.0",
+]
+
+[project.scripts]
+ray = "hello_ray.main:main"
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"
