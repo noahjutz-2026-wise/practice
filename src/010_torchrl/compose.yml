@@ -11,9 +11,9 @@ services:
               capabilities: [gpu]
     env_file: .env
     environment:
-      RAY_PROMETHEUS_HOST: http://prometheus:9090
-      RAY_GRAFANA_HOST: http://grafana:3000
-      RAY_GRAFANA_IFRAME_HOST: http://127.0.0.1:3000
+      RAY_PROMETHEUS_HOST: http://prometheus:9090/prometheus
+      RAY_GRAFANA_HOST: http://grafana:3000/grafana
+      RAY_GRAFANA_IFRAME_HOST: /grafana
       RAY_TEMP_DIR: ${RAY_TEMP_DIR}
       UV_LINK_MODE: copy
       UV_CACHE_DIR: /home/ray/.cache/uv
@@ -21,9 +21,6 @@ services:
       test: python -c 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8265/api/version")'
     shm_size: 4.64gb
     userns_mode: keep-id
-    ports:
-      - 8265:8265
-      - 6379:6379
     networks:
       - raynet
     volumes:
@@ -36,8 +33,7 @@ services:
         condition: service_healthy
     command:
       - "--config.file=${RAY_TEMP_DIR}/session_latest/metrics/prometheus/prometheus.yml"
-    ports:
-      - 9090:9090
+      - "--web.route-prefix=/prometheus"
     networks:
       - raynet
     volumes:
@@ -52,15 +48,28 @@ services:
       - "web"
     environment:
       - GF_PATHS_PROVISIONING=${RAY_TEMP_DIR}/session_latest/metrics/grafana/provisioning
-    ports:
-      - 3000:3000
+      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
     networks:
       - raynet
     volumes:
       - ray-tmp:${RAY_TEMP_DIR}
+  caddy:
+    image: docker.io/caddy:2.11.4-alpine
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - raynet
 
 volumes:
   ray-tmp:
+  caddy_data:
+  caddy_config:
 
 networks:
   raynet:
