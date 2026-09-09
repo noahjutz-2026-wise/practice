@@ -1,13 +1,11 @@
 # Ray RLLib + DreamerV3
 
-## Required services
+## Quickstart
 
 ```bash
 podman-compose up -d --build
-```
+uv run ray job submit --working-dir . --address="http://127.0.0.1:8265" -- uv run trl
 
-## Train
-
-```bash
-uv run --env-file .env --active trl
+# Local (unsupported)
+# uv run --env-file .env --active trl
 ```
