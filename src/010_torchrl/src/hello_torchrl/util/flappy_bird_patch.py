@@ -1,4 +1,5 @@
-"""Monkey-patches pygame.mixer to avoid missing shared library errors (e.g. libgthread-2.0.so.0)
+"""
+Monkey-patches pygame.mixer to avoid missing shared library errors (e.g. libgthread-2.0.so.0)
 in headless or containerized environments where audio is not used.
 """
 
@@ -12,6 +13,7 @@ sys.modules["pygame.mixer"] = mock_mixer
 
 try:
     import pygame
+
     pygame.mixer = mock_mixer
 except ImportError:
     pass
@@ -20,3 +22,4 @@ except ImportError:
 import flappy_bird_gymnasium
 
 __all__ = ["flappy_bird_gymnasium"]
+
