@@ -1,7 +1,7 @@
 :8080 {
 	redir / /ray
 	uri /ray strip_prefix /ray
-	reverse_proxy /grafana grafana:3000
-	reverse_proxy /prometheus prometheus:9090
+	reverse_proxy /grafana* grafana:3000
+	reverse_proxy /prometheus* prometheus:9090
 	reverse_proxy ray-head:8265
 }
