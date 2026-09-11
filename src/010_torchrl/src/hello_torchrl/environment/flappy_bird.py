@@ -25,6 +25,6 @@ def get_env(*sink: Any):
 
 
 def get_env_human(*sink: Any):
-    env = gym.make("FlappyBird-v0", render_mode="rgb_array", audio_on=False)
+    env = get_env_dreamer()
     env = gym.wrappers.HumanRendering(env)
     return env
