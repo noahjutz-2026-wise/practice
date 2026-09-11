@@ -16,27 +16,22 @@ def main():
         address="auto",
         runtime_env={},
     )
-    tune.register_env("flappy-bird", lambda _: flappy_bird.env)
+    tune.register_env("flappy-bird", flappy_bird.get_env)
     config = (
         DreamerV3Config()
         .environment("flappy-bird")
         .env_runners(
-            num_env_runners=0,
-            num_envs_per_env_runner=1,
+            num_env_runners=8,
+            num_envs_per_env_runner=4,
         )
         .learners(
-            num_learners=0,
+            num_learners=1,
             num_gpus_per_learner=1,
         )
         .training(
             model_size="XS",
-            training_ratio=2,
-            batch_size_B=8,
-            batch_length_T=32,
-            replay_buffer_config={
-                "type": "EpisodeReplayBuffer",
-                "capacity": 10000,
-            },
+            training_ratio=1,
+            batch_size_B=32,
         )
     )
 
@@ -46,7 +41,7 @@ def main():
         run_config=tune.RunConfig(
             storage_path="/var/tmp/ray_results",
             checkpoint_config=CheckpointConfig(
-                checkpoint_frequency=10, checkpoint_at_end=True, num_to_keep=2
+                checkpoint_frequency=1000, checkpoint_at_end=True, num_to_keep=2
             ),
             callbacks=[
                 WandbLoggerCallback(
