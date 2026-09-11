@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import ray
 from ray import tune
@@ -8,7 +9,8 @@ from ray.tune import CheckpointConfig
 
 from hello_torchrl.environment import flappy_bird
 
-WANDB_API_KEY = os.environ.get("WANDB_KEY") or os.environ.get("WANDB_API_KEY")
+WANDB_API_KEY = os.environ["WANDB_API_KEY"]
+RAY_TEMP_DIR = Path(os.environ["RAY_TEMP_DIR"])
 
 
 def main():
@@ -39,7 +41,7 @@ def main():
         trainable="DreamerV3",
         param_space=config,
         run_config=tune.RunConfig(
-            storage_path="/var/tmp/ray_results",
+            storage_path=(RAY_TEMP_DIR / "ray_results").name,
             checkpoint_config=CheckpointConfig(
                 checkpoint_frequency=1000, checkpoint_at_end=True, num_to_keep=2
             ),
