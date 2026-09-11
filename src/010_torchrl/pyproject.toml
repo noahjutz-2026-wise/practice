@@ -25,6 +25,7 @@ allowedUntypedLibraries = ["flappy_bird_gymnasium", "supersuit", "gymnasium", "r
 
 [project.scripts]
 trl = "hello_torchrl.main:main"
+infer = "hello_torchrl.inference.inference:main"
 
 [build-system]
 requires = ["uv_build>=0.12.9,<0.13.0"]
