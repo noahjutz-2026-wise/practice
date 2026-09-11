@@ -9,9 +9,22 @@ from hello_torchrl.util.flappy_bird_patch import (
 )
 
 
-def get_env(*sink: Any) -> gym.Env[gym.spaces.Box, gym.spaces.Discrete[np.uint8]]:
+def get_env_dreamer(
+    *sink: Any,
+) -> gym.Env[gym.spaces.Box, gym.spaces.Discrete[np.uint8]]:
     env = gym.make("FlappyBird-v0", render_mode="rgb_array", audio_on=False)
     env = gym.wrappers.AddRenderObservation(env, render_only=True)
     env = gym.wrappers.ResizeObservation(env, (64, 64))
     env = NormalizedImageEnv(env)
+    return env
+
+
+def get_env(*sink: Any):
+    env = gym.make("FlappyBird-v0", render_mode="rgb_array", audio_on=False)
+    return env
+
+
+def get_env_human(*sink: Any):
+    env = gym.make("FlappyBird-v0", render_mode="rgb_array", audio_on=False)
+    env = gym.wrappers.HumanRendering(env)
     return env
