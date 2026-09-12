@@ -4,7 +4,7 @@ import gymnasium as gym
 import numpy as np
 from ray.rllib.env.wrappers.atari_wrappers import NormalizedImageEnv
 
-from hello_torchrl.util.flappy_bird_patch import (
+from hello_ray.util.flappy_bird_patch import (
     flappy_bird_gymnasium,  # pyright: ignore[reportUnusedImport]  # noqa: F401
 )
 
