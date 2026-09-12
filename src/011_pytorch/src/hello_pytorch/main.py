@@ -32,5 +32,7 @@ def main():
     torch.manual_seed(42)
 
     model_0 = LinearRegressionModel()
-    print([x for x in model_0.parameters()])
-    print(model_0.state_dict())
+
+    with torch.inference_mode():
+        y_preds = model_0(X_test)
+        print(y_preds)
