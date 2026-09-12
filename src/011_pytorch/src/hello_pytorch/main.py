@@ -3,6 +3,18 @@ import torch
 from torch import nn
 
 
+class LinearRegressionModel(nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+        self.weights = nn.Parameter(
+            torch.randn(1, dtype=torch.float, requires_grad=True)
+        )
+        self.bias = nn.Parameter(torch.randn(1, dtype=torch.float, requires_grad=True))
+
+    def forward(self, x: torch.Tensor):
+        return self.weights * x + self.bias
+
+
 def main():
     weight = 0.7
     bias = 0.3
@@ -16,3 +28,9 @@ def main():
     train_split = int(0.8 * len(X))
     X_train, y_train = X[:train_split], y[:train_split]
     X_test, y_test = X[train_split:], y[train_split:]
+
+    torch.manual_seed(42)
+
+    model_0 = LinearRegressionModel()
+    print([x for x in model_0.parameters()])
+    print(model_0.state_dict())
