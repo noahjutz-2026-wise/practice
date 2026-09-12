@@ -1,5 +1,5 @@
 [project]
-name = "hello_torchrl"
+name = "hello_ray"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -24,8 +24,8 @@ typeCheckingMode = "recommended"
 allowedUntypedLibraries = ["flappy_bird_gymnasium", "supersuit", "gymnasium", "ray"]
 
 [project.scripts]
-trl = "hello_torchrl.main:main"
-infer = "hello_torchrl.inference.inference:main"
+tune = "hello_ray.main:main"
+infer = "hello_ray.inference.inference:main"
 
 [build-system]
 requires = ["uv_build>=0.12.9,<0.13.0"]

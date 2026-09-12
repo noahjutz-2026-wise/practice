@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from ray.rllib.core.rl_module import RLModule
 
-from hello_torchrl.environment.flappy_bird import (
+from hello_ray.environment.flappy_bird import (
     get_env,
     get_env_dreamer,
     get_env_human,
