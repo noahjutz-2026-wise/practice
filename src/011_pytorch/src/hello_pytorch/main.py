@@ -33,6 +33,5 @@ def main():
 
     model_0 = LinearRegressionModel()
 
-    with torch.inference_mode():
-        y_preds = model_0(X_test)
-        print(y_preds)
+    loss_fn = nn.L1Loss()
+    optimizer = torch.optim.SGD(params=model_0.parameters(), lr=0.01)
