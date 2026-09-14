@@ -27,5 +27,7 @@ def main():
         X, y, test_size=0.2, random_state=42
     )
 
-    mod_0 = CircleModelV0().to(device)
-    print(mod_0)
+    mod_0 = nn.Sequential(
+        nn.Linear(in_features=2, out_features=5),
+        nn.Linear(in_features=5, out_features=1),
+    ).to(device)
