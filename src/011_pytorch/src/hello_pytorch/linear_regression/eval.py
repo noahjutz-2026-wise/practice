@@ -2,7 +2,7 @@ from importlib.resources import as_file, files
 
 import torch
 
-from hello_pytorch.main import LinearRegressionModel
+from hello_pytorch.linear_regression.train import LinearRegressionModel
 
 MODEL_NAME = "01_pytorch_workflow_model_0.pt"
 
