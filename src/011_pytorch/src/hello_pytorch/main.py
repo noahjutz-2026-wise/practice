@@ -36,7 +36,7 @@ def main():
     loss_fn = nn.L1Loss()
     optimizer = torch.optim.SGD(params=model_0.parameters(), lr=0.01)
 
-    epochs = 100
+    epochs = 300
 
     for epoch in range(epochs):
         model_0.train()
@@ -52,6 +52,4 @@ def main():
             test_loss = loss_fn(test_pred, y_test.type(torch.float))
 
             if epoch % 10 == 0:
-                print(
-                    f"Epoch: {epoch} | MAE Train Loss: {loss} | MAE Test Loss: {test_loss} "
-                )
+                print(model_0.state_dict())
