@@ -13,9 +13,10 @@ class LinearRegressionModel(nn.Module):
             torch.randn(1, dtype=torch.float, requires_grad=True)
         )
         self.bias = nn.Parameter(torch.randn(1, dtype=torch.float, requires_grad=True))
+        self.linear_layer = nn.Linear(in_features=1, out_features=1)
 
     def forward(self, x: torch.Tensor):
-        return self.weights * x + self.bias
+        return self.linear_layer(x)
 
 
 def main():
@@ -43,7 +44,7 @@ def main():
     loss_fn = nn.L1Loss()
     optimizer = torch.optim.SGD(params=model_0.parameters(), lr=0.01)
 
-    epochs = 300
+    epochs = 1000
 
     for epoch in range(epochs):
         model_0.train()
