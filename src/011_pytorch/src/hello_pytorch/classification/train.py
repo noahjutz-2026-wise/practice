@@ -6,6 +6,11 @@ from torch import nn
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
+def accuracy_fn(y_true, y_pred):
+    correct = torch.eq(y_true, y_pred).sum().item()
+    return correct / len(y_pred)
+
+
 class CircleModelV0(nn.Module):
     def __init__(self):
         super().__init__()
@@ -31,3 +36,12 @@ def main():
         nn.Linear(in_features=2, out_features=5),
         nn.Linear(in_features=5, out_features=1),
     ).to(device)
+
+    loss_fn = nn.BCEWithLogitsLoss()
+    optimizer = torch.optim.SGD(params=mod_0.parameters(), lr=0.1)
+
+    y_pred = mod_0(X_test.to(device))
+    y_pred = torch.sigmoid(y_pred)
+    y_pred = torch.round(y_pred)
+    y_pred = y_pred.squeeze()
+    print(y_pred)
