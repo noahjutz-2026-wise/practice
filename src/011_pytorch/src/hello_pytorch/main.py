@@ -1,6 +1,9 @@
-import matplotlib.pyplot as plt
+from importlib.resources import as_file, files
+
 import torch
 from torch import nn
+
+MODEL_NAME = "01_pytorch_workflow_model_0.pt"
 
 
 class LinearRegressionModel(nn.Module):
@@ -16,6 +19,10 @@ class LinearRegressionModel(nn.Module):
 
 
 def main():
+    models = files() / "models"
+    with as_file(models) as m:
+        m.mkdir(parents=True, exist_ok=True)
+        model_save_path = m / MODEL_NAME
     weight = 0.7
     bias = 0.3
 
@@ -53,3 +60,5 @@ def main():
 
             if epoch % 10 == 0:
                 print(model_0.state_dict())
+
+    torch.save(model_0.state_dict(), model_save_path)
