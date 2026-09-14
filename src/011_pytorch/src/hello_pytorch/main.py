@@ -35,3 +35,23 @@ def main():
 
     loss_fn = nn.L1Loss()
     optimizer = torch.optim.SGD(params=model_0.parameters(), lr=0.01)
+
+    epochs = 100
+
+    for epoch in range(epochs):
+        model_0.train()
+        y_pred = model_0(X_train)
+        loss = loss_fn(y_pred, y_train)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        model_0.eval()
+        with torch.inference_mode():
+            test_pred = model_0(X_test)
+            test_loss = loss_fn(test_pred, y_test.type(torch.float))
+
+            if epoch % 10 == 0:
+                print(
+                    f"Epoch: {epoch} | MAE Train Loss: {loss} | MAE Test Loss: {test_loss} "
+                )
