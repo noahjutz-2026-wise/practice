@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import torch
 from sklearn.datasets import make_circles
 from sklearn.model_selection import train_test_split
@@ -77,3 +78,11 @@ def main():
                 print(
                     f"Epoch: {epoch} | Loss: {loss:.5f}, Accuracy: {acc:.2f}% | Test loss: {loss_test:.5f}, Test acc: {acc_test:.2f}%"
                 )
+    plt.figure(figsize=(12, 6))
+    plt.subplot(1, 2, 1)
+    plt.title("Train")
+    plot_decision_boundary(mod_0, X_train, y_train)
+    plt.subplot(1, 2, 2)
+    plt.title("Test")
+    plot_decision_boundary(mod_0, X_test, y_test)
+    plt.show()
