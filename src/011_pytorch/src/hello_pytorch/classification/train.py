@@ -3,6 +3,8 @@ from sklearn.datasets import make_circles
 from sklearn.model_selection import train_test_split
 from torch import nn
 
+from hello_pytorch.helper_functions import plot_decision_boundary, plot_predictions
+
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
