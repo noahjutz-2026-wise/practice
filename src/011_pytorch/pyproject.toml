@@ -20,7 +20,8 @@ dependencies = [
 [project.scripts]
 linear = "hello_pytorch.linear_regression.train:main"
 linear_eval = "hello_pytorch.linear_regression.eval:main"
-class = "hello_pytorch.classification.train:main"
+class_binary = "hello_pytorch.classification.binary:main"
+class_multi = "hello_pytorch.classification.multiclass:main"
 
 [build-system]
 requires = ["uv_build>=0.12.9,<0.13.0"]
