@@ -43,14 +43,15 @@ def main():
     )
 
     mod_0 = nn.Sequential(
-        nn.Linear(in_features=2, out_features=5),
-        nn.Linear(in_features=5, out_features=1),
+        nn.Linear(in_features=2, out_features=10),
+        nn.Linear(in_features=10, out_features=10),
+        nn.Linear(in_features=10, out_features=1),
     ).to(device)
 
     loss_fn = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.SGD(params=mod_0.parameters(), lr=0.1)
 
-    epochs = 100
+    epochs = 1000
 
     for epoch in range(epochs):
         mod_0.train()
