@@ -24,6 +24,18 @@ class CircleModelV0(nn.Module):
         return self.layer_2(self.layer_1(x))
 
 
+class CircleModelV2(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layer_1 = nn.Linear(in_features=2, out_features=10)
+        self.layer_2 = nn.Linear(in_features=10, out_features=10)
+        self.layer_3 = nn.Linear(in_features=10, out_features=1)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        return self.layer_3(self.relu(self.layer_2(self.relu(self.layer_1(x)))))
+
+
 def main():
     n_samples = 1000
     X, y = make_circles(n_samples, noise=0.03, random_state=42)
@@ -42,11 +54,7 @@ def main():
         y_test.to(device),
     )
 
-    mod_0 = nn.Sequential(
-        nn.Linear(in_features=2, out_features=10),
-        nn.Linear(in_features=10, out_features=10),
-        nn.Linear(in_features=10, out_features=1),
-    ).to(device)
+    mod_0 = CircleModelV2().to(device)
 
     loss_fn = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.SGD(params=mod_0.parameters(), lr=0.1)
