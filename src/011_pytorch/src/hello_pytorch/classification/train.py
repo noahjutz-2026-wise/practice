@@ -32,6 +32,13 @@ def main():
         X, y, test_size=0.2, random_state=42
     )
 
+    X_train, X_test, y_train, y_test = (
+        X_train.to(device),
+        X_test.to(device),
+        y_train.to(device),
+        y_test.to(device),
+    )
+
     mod_0 = nn.Sequential(
         nn.Linear(in_features=2, out_features=5),
         nn.Linear(in_features=5, out_features=1),
@@ -40,8 +47,31 @@ def main():
     loss_fn = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.SGD(params=mod_0.parameters(), lr=0.1)
 
-    y_pred = mod_0(X_test.to(device))
-    y_pred = torch.sigmoid(y_pred)
-    y_pred = torch.round(y_pred)
-    y_pred = y_pred.squeeze()
-    print(y_pred)
+    epochs = 100
+
+    for epoch in range(epochs):
+        mod_0.train()
+        y_logits = mod_0(X_train).squeeze()
+        y_pred = torch.sigmoid(y_logits)
+        y_pred = torch.round(y_pred)
+
+        loss = loss_fn(y_logits, y_train)
+        acc = accuracy_fn(y_true=y_train, y_pred=y_pred)
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        mod_0.eval()
+        with torch.inference_mode():
+            y_logits_test = mod_0(X_test).squeeze()
+            y_pred_test = torch.sigmoid(y_logits_test)
+            y_pred_test = torch.round(y_logits_test)
+
+            loss_test = loss_fn(y_logits_test, y_test)
+            acc_test = accuracy_fn(y_test, y_pred_test)
+
+            if epoch % 10 == 0:
+                print(
+                    f"Epoch: {epoch} | Loss: {loss:.5f}, Accuracy: {acc:.2f}% | Test loss: {loss_test:.5f}, Test acc: {acc_test:.2f}%"
+                )
