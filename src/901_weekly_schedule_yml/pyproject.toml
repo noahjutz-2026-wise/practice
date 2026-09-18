@@ -7,7 +7,9 @@ authors = [
     { name = "Noah Jutz", email = "git@noahjutz.anonaddy.com" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "icalendar>=7.3.0",
+]
 
 [project.scripts]
 yml2ical = "weekly_schedule_yml.main:main"
