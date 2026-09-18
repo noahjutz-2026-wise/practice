@@ -1,0 +1,19 @@
+[project]
+name = "time-treemap"
+version = "0.1.0"
+description = "Generate Plotly treemaps from SuperProductivity task tracking data"
+readme = "README.md"
+authors = [
+    { name = "Noah Jutz", email = "git@noahjutz.anonaddy.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "plotly>=7.1.0",
+]
+
+[project.scripts]
+time-treemap = "time_treemap.main:main"
+
+[build-system]
+requires = ["uv_build>=0.12.15,<0.13.0"]
+build-backend = "uv_build"
