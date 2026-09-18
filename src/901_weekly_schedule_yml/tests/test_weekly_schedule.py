@@ -210,17 +210,28 @@ class TestWeeklyScheduleYml(unittest.TestCase):
                 {"from_sec": 8 * 3600, "to_sec": 9 * 3600, "body": "Study"}
             ]
         }
-        meta = {"start_date": "2026-09-14"}
+        meta = {"start_date": "2026-09-14", "timezone": "Europe/Berlin"}
         cal = generate_ical(days_slots, meta)
         parsed_cal = Calendar.from_ical(cal.to_ical())
+        timezones = [c for c in parsed_cal.subcomponents if c.name == "VTIMEZONE"]
+        self.assertEqual(len(timezones), 1)
         events = [c for c in parsed_cal.subcomponents if c.name == "VEVENT"]
         self.assertEqual(len(events), 1)
         event = events[0]
         self.assertEqual(str(event["summary"]), "Study")
         self.assertEqual(event["rrule"]["FREQ"], ["WEEKLY"])
         self.assertEqual(event["rrule"]["BYDAY"], ["MO"])
-        self.assertEqual(event["dtstart"].dt, datetime.datetime(2026, 9, 14, 8, 0))
-        self.assertEqual(event["dtend"].dt, datetime.datetime(2026, 9, 14, 9, 0))
+        self.assertEqual(event["dtstart"].dt.hour, 8)
+        self.assertEqual(event["dtstart"].dt.minute, 0)
+        self.assertEqual(event["dtend"].dt.hour, 9)
+        self.assertEqual(event["dtend"].dt.minute, 0)
+
+        # Test floating timezone explicitly
+        meta_floating = {"start_date": "2026-09-14", "timezone": "floating"}
+        cal_floating = generate_ical(days_slots, meta_floating)
+        parsed_floating = Calendar.from_ical(cal_floating.to_ical())
+        event_floating = [c for c in parsed_floating.subcomponents if c.name == "VEVENT"][0]
+        self.assertEqual(event_floating["dtstart"].dt, datetime.datetime(2026, 9, 14, 8, 0))
 
     def test_deterministic_uids(self):
         days_slots = {

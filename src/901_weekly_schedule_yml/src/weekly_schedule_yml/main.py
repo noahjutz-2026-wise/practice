@@ -10,7 +10,7 @@ import zoneinfo
 from pathlib import Path
 from typing import Any
 
-from icalendar import Calendar, Event
+from icalendar import Calendar, Event, Timezone
 import yaml
 
 DAY_MAP: dict[str, tuple[int, str]] = {
@@ -29,6 +29,53 @@ DAY_MAP: dict[str, tuple[int, str]] = {
     "sun": (6, "SU"),
     "sunday": (6, "SU"),
 }
+
+
+def get_system_timezone() -> zoneinfo.ZoneInfo:
+    """Detect local system IANA timezone, falling back to UTC."""
+    # 1. Try reading /etc/localtime symlink target on Linux/Unix
+    try:
+        localtime_path = Path("/etc/localtime").resolve()
+        parts = localtime_path.parts
+        if "zoneinfo" in parts:
+            idx = parts.index("zoneinfo")
+            tz_name = "/".join(parts[idx + 1 :])
+            return zoneinfo.ZoneInfo(tz_name)
+    except Exception:
+        pass
+
+    # 2. Try /etc/timezone (Debian/Ubuntu)
+    try:
+        tz_path = Path("/etc/timezone")
+        if tz_path.exists():
+            tz_name = tz_path.read_text(encoding="utf-8").strip()
+            if tz_name:
+                return zoneinfo.ZoneInfo(tz_name)
+    except Exception:
+        pass
+
+    # 3. Try tzlocal if installed
+    try:
+        import tzlocal  # type: ignore
+
+        tz = tzlocal.get_localzone()
+        name = getattr(tz, "key", None) or getattr(tz, "zone", None)
+        if name:
+            return zoneinfo.ZoneInfo(name)
+    except Exception:
+        pass
+
+    # 4. Fallback to datetime.datetime.now().astimezone().tzinfo
+    try:
+        local_tz = datetime.datetime.now().astimezone().tzinfo
+        if local_tz is not None:
+            name = getattr(local_tz, "key", None) or getattr(local_tz, "zone", None)
+            if name:
+                return zoneinfo.ZoneInfo(name)
+    except Exception:
+        pass
+
+    return zoneinfo.ZoneInfo("UTC")
 
 
 def parse_time(val: Any) -> datetime.time:
@@ -261,10 +308,25 @@ def generate_ical(
     cal.add("x-wr-calname", name)
 
     tz: datetime.tzinfo | None = None
-    tz_str = meta.get("timezone") or meta.get("tz")
-    if tz_str:
-        tz = zoneinfo.ZoneInfo(str(tz_str))
-        cal.add("x-wr-timezone", str(tz_str))
+    tz_val = meta.get("timezone", meta.get("tz"))
+    if tz_val is None:
+        tz = get_system_timezone()
+    elif isinstance(tz_val, str) and tz_val.lower() in ("floating", "naive", "none", "null"):
+        tz = None
+    elif tz_val is False:
+        tz = None
+    elif isinstance(tz_val, str):
+        tz = zoneinfo.ZoneInfo(tz_val)
+    elif isinstance(tz_val, datetime.tzinfo):
+        tz = tz_val
+
+    if tz is not None:
+        tz_name = getattr(tz, "key", str(tz))
+        cal.add("x-wr-timezone", tz_name)
+        try:
+            cal.add_component(Timezone.from_tzinfo(tz))
+        except Exception:
+            pass
 
     # Determine reference Monday date
     start_date_val = meta.get("start_date") or meta.get("start") or meta.get("from")
