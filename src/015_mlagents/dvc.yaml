@@ -1,0 +1,17 @@
+stages:
+  train:
+    cmd: uv run python -m python_mlagents.ai_train
+    deps:
+      - src/python_mlagents/ai_train.py
+    params:
+      - learning_rate
+      - ent_coef
+      - clip_range
+      - gamma
+      - gae_lambda
+      - n_steps
+      - batch_size
+      - total_timesteps
+    metrics:
+      - metrics.json:
+          cache: false

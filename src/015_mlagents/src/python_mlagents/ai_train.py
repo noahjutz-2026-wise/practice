@@ -1,5 +1,8 @@
 from collections import deque
 
+import pathlib
+
+import yaml
 import torch.nn as nn
 from mlagents_envs.environment import UnityEnvironment
 from mlagents_envs.envs.unity_gym_env import UnityToGymWrapper
@@ -50,15 +53,18 @@ class SuccessRateStopCallback(BaseCallback):
         return True
 
 
+def load_params():
+    params_path = pathlib.Path(__file__).resolve().parents[2] / "params.yaml"
+    with open(params_path) as f:
+        return yaml.safe_load(f)
+
+
 def main():
+    params = load_params()
     config = {
         "user": "jno",
         "policy_type": "MlpPolicy",
-        "total_timesteps": 1_000_000,
-        "learning_rate": 3e-4,
-        "n_steps": 2048,
-        "batch_size": 128,
-        "ent_coef": 0.01,
+        **params,
     }
     run = wandb.init(
         project="sb3",
@@ -88,10 +94,13 @@ def main():
         "MlpPolicy",
         env,
         policy_kwargs=policy_kwargs,
-        learning_rate=3e-4,
-        n_steps=2048,
-        batch_size=128,
-        ent_coef=0.01,
+        learning_rate=params["learning_rate"],
+        n_steps=params["n_steps"],
+        batch_size=params["batch_size"],
+        ent_coef=params["ent_coef"],
+        clip_range=params["clip_range"],
+        gamma=params["gamma"],
+        gae_lambda=params["gae_lambda"],
         verbose=0,
         tensorboard_log=f"runs/{run.id}",
     )
@@ -101,7 +110,7 @@ def main():
             WandbCallback(model_save_path=f"models/{run.id}", verbose=2),
         ]
     )
-    model.learn(total_timesteps=1_000_000, callback=callbacks)
+    model.learn(total_timesteps=params["total_timesteps"], callback=callbacks)
     model.save("unity_model")
     run.finish()
     env.close()
