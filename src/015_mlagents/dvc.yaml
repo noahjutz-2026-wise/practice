@@ -10,6 +10,11 @@ stages:
       - n_steps
       - batch_size
       - total_timesteps
+      - seed
+      - log_interval_steps
+      - run_mode
+      - eval_model_path
+      - eval_episodes
     metrics:
       - metrics.json:
           cache: false

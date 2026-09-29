@@ -3,4 +3,10 @@ ent_coef: 0.0
 clip_range: 0.2
 n_steps: 2048
 batch_size: 64
-total_timesteps: 500
+total_timesteps: 100000
+seed: 0
+log_interval_steps: 100
+run_mode: train
+eval_model_path: unity_model
+eval_episodes: 50
+time_scale: 20.0
