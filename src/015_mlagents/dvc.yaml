@@ -7,8 +7,6 @@ stages:
       - learning_rate
       - ent_coef
       - clip_range
-      - gamma
-      - gae_lambda
       - n_steps
       - batch_size
       - total_timesteps
