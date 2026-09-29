@@ -64,8 +64,8 @@ class TrainMetricsCallback(BaseCallback):
         m = {"timestep": self.num_timesteps}
         logger = self.model.logger
         for key in METRICS_KEYS:
-            if key in logger.name2value:
-                m[key.split("/")[1]] = float(logger.name2value[key])
+            if key in logger.name_to_value:
+                m[key.split("/")[1]] = float(logger.name_to_value[key])
         m["step_reward"] = float(np.mean(self.locals["rewards"]))
         m["obs_mean"] = float(np.mean(self.locals["new_obs"]))
         m["obs_std"] = float(np.std(self.locals["new_obs"]))
