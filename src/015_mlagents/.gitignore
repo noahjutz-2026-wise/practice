@@ -2,3 +2,5 @@ results/
 *.onnx
 *.zip
 *.log
+wandb/
+runs/

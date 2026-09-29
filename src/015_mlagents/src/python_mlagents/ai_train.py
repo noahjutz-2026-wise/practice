@@ -8,11 +8,14 @@ from mlagents_envs.side_channel.engine_configuration_channel import (
 )
 from mlagents_envs.side_channel.stats_side_channel import StatsSideChannel
 from stable_baselines3 import PPO
-from stable_baselines3.common.callbacks import BaseCallback
+from stable_baselines3.common.callbacks import BaseCallback, CallbackList
 from stable_baselines3.common.vec_env import SubprocVecEnv
+from wandb.integration.sb3 import WandbCallback
+
+import wandb
 
 BUILD_PATH = "/home/noah/Downloads/export/unitybuild.x86_64"
-NUM_ENVS = 4
+NUM_ENVS = 32
 
 
 class StatsUnityWrapper(UnityToGymWrapper):
@@ -50,6 +53,14 @@ class SuccessRateStopCallback(BaseCallback):
                     f"Path: {path_ratio * 100:4.1f}% (Checkpoints: {checkpoints:3.0f}) | "
                     f"Rew: {rew:5.2f} | Success Rate: {rate * 100:4.1f}% ({len(self.window)}/50)"
                 )
+                wandb.log(
+                    {
+                        "rollout/success_rate": rate,
+                        "rollout/path_ratio": path_ratio,
+                        "rollout/checkpoints": checkpoints,
+                        "rollout/episode_reward": rew,
+                    }
+                )
                 if len(self.window) == 50 and rate >= 0.75:
                     print("Reached 75% success rate. Stopping training.")
                     return False
@@ -74,6 +85,24 @@ def make_env(worker_id: int):
 
 
 def main():
+    config = {
+        "user": "jno",
+        "policy_type": "MlpPolicy",
+        "total_timesteps": 1_000_000,
+        "learning_rate": 3e-4,
+        "n_steps": 1024,
+        "batch_size": 128,
+        "ent_coef": 0.01,
+        "num_envs": NUM_ENVS,
+    }
+    run = wandb.init(
+        project="sb3",
+        entity="tjno",
+        config=config,
+        sync_tensorboard=True,
+        save_code=True,
+    )
+
     env = SubprocVecEnv([make_env(i) for i in range(NUM_ENVS)])
 
     policy_kwargs = dict(
@@ -89,12 +118,19 @@ def main():
         batch_size=128,
         ent_coef=0.01,
         verbose=0,
+        tensorboard_log=f"runs/{run.id}",
     )
-    model.learn(total_timesteps=1_000_000, callback=SuccessRateStopCallback())
+    callbacks = CallbackList(
+        [
+            SuccessRateStopCallback(),
+            WandbCallback(model_save_path=f"models/{run.id}", verbose=2),
+        ]
+    )
+    model.learn(total_timesteps=1_000_000, callback=callbacks)
     model.save("unity_model")
+    run.finish()
     env.close()
 
 
 if __name__ == "__main__":
     main()
-
