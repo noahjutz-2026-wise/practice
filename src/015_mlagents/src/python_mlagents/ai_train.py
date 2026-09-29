@@ -5,6 +5,7 @@ import json
 import os
 import pathlib
 import re
+import socket
 import yaml
 
 from mlagents_envs.environment import UnityEnvironment
@@ -80,11 +81,16 @@ def make_env():
     channel = EngineConfigurationChannel()
     channel.set_configuration_parameters(time_scale=20.0)
     stats_channel = StatsSideChannel()
+    # claim a free port up front so parallel DVC experiments never collide
+    # (worker_id 0 => port = base_port; pid-based ids collide mod 100)
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("localhost", 0))
+        base_port = s.getsockname()[1]
     env = UnityToGymWrapper(
         UnityEnvironment(
             "/home/noah/Downloads/export/unitybuild.x86_64",
-            # unique per process so parallel DVC experiments don't share a port
-            worker_id=int(os.environ.get("SLURM_PROCID", os.getpid() % 100)),
+            base_port=base_port,
+            worker_id=0,
             no_graphics=True,
             side_channels=[channel, stats_channel],
             additional_args=["-logFile", "mlagents.log"],
