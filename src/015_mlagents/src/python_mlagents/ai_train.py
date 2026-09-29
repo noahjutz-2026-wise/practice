@@ -9,44 +9,27 @@ from mlagents_envs.side_channel.engine_configuration_channel import (
 from mlagents_envs.side_channel.stats_side_channel import StatsSideChannel
 from stable_baselines3 import PPO
 from stable_baselines3.common.callbacks import BaseCallback, CallbackList
-from stable_baselines3.common.vec_env import SubprocVecEnv
 from wandb.integration.sb3 import WandbCallback
 
 import wandb
 
-BUILD_PATH = "/home/noah/Downloads/export/unitybuild.x86_64"
-NUM_ENVS = 32
-
-
-class StatsUnityWrapper(UnityToGymWrapper):
-    def __init__(self, unity_env: UnityEnvironment, stats_channel: StatsSideChannel):
-        super().__init__(unity_env)
-        self.stats_channel = stats_channel
-
-    def step(self, action):
-        obs, rew, done, info = super().step(action)
-        if done:
-            stats = self.stats_channel.get_and_reset_stats()
-            info["checkpoints"] = stats.get("achieved_checkpoints", [(0,)])[0][0]
-            info["path_ratio"] = stats.get("path_completion_ratio", [(0,)])[0][0]
-        return obs, rew, done, info
-
 
 class SuccessRateStopCallback(BaseCallback):
-    def __init__(self):
+    def __init__(self, stats_channel: StatsSideChannel):
         super().__init__()
+        self.stats_channel = stats_channel
         self.window = deque(maxlen=50)
 
     def _on_step(self) -> bool:
-        for done, rew, info in zip(
-            self.locals["dones"], self.locals["rewards"], self.locals["infos"]
-        ):
+        for done, rew in zip(self.locals["dones"], self.locals["rewards"]):
             if done:
                 is_goal = rew > 2.0
                 self.window.append(1.0 if is_goal else 0.0)
                 rate = sum(self.window) / len(self.window)
-                checkpoints = info.get("checkpoints", 0)
-                path_ratio = info.get("path_ratio", 0.0)
+
+                stats = self.stats_channel.get_and_reset_stats()
+                checkpoints = stats.get("achieved_checkpoints", [(0,)])[0][0]
+                path_ratio = stats.get("path_completion_ratio", [(0,)])[0][0]
 
                 print(
                     f"Step {self.num_timesteps:6d} | Goal: {str(is_goal):<5} | "
@@ -67,33 +50,15 @@ class SuccessRateStopCallback(BaseCallback):
         return True
 
 
-def make_env(worker_id: int):
-    def _init():
-        channel = EngineConfigurationChannel()
-        channel.set_configuration_parameters(time_scale=20.0)
-        stats_channel = StatsSideChannel()
-        unity_env = UnityEnvironment(
-            BUILD_PATH,
-            worker_id=worker_id,
-            no_graphics=True,
-            side_channels=[channel, stats_channel],
-            additional_args=["-logFile", "mlagents.log"],
-        )
-        return StatsUnityWrapper(unity_env, stats_channel)
-
-    return _init
-
-
 def main():
     config = {
         "user": "jno",
         "policy_type": "MlpPolicy",
         "total_timesteps": 1_000_000,
         "learning_rate": 3e-4,
-        "n_steps": 1024,
+        "n_steps": 2048,
         "batch_size": 128,
         "ent_coef": 0.01,
-        "num_envs": NUM_ENVS,
     }
     run = wandb.init(
         project="sb3",
@@ -103,7 +68,17 @@ def main():
         save_code=True,
     )
 
-    env = SubprocVecEnv([make_env(i) for i in range(NUM_ENVS)])
+    channel = EngineConfigurationChannel()
+    channel.set_configuration_parameters(time_scale=20.0)
+    stats_channel = StatsSideChannel()
+    env = UnityToGymWrapper(
+        UnityEnvironment(
+            "/home/noah/Downloads/export/unitybuild.x86_64",
+            no_graphics=True,
+            side_channels=[channel, stats_channel],
+            additional_args=["-logFile", "mlagents.log"],
+        )
+    )
 
     policy_kwargs = dict(
         net_arch=dict(pi=[1024, 1024, 1024], vf=[1024, 1024, 1024]),
@@ -114,7 +89,7 @@ def main():
         env,
         policy_kwargs=policy_kwargs,
         learning_rate=3e-4,
-        n_steps=1024,
+        n_steps=2048,
         batch_size=128,
         ent_coef=0.01,
         verbose=0,
@@ -122,7 +97,7 @@ def main():
     )
     callbacks = CallbackList(
         [
-            SuccessRateStopCallback(),
+            SuccessRateStopCallback(stats_channel),
             WandbCallback(model_save_path=f"models/{run.id}", verbose=2),
         ]
     )
