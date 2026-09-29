@@ -1,10 +1,13 @@
 from collections import deque
 
+import os
 import pathlib
+import time
 
 import yaml
 import torch.nn as nn
 from mlagents_envs.environment import UnityEnvironment
+from mlagents_envs.exception import UnityWorkerInUseException
 from mlagents_envs.envs.unity_gym_env import UnityToGymWrapper
 from mlagents_envs.side_channel.engine_configuration_channel import (
     EngineConfigurationChannel,
@@ -53,6 +56,32 @@ class SuccessRateStopCallback(BaseCallback):
         return True
 
 
+def make_env(max_attempts=20, cooldown=2.0):
+    # mlagents_envs picks base_port=5004 + 5*worker_id for worker 0, so random
+    # worker_ids only give a random port; another process may still claim it
+    # between check and bind, hence retry with a fresh worker_id/port.
+    for attempt in range(max_attempts):
+        worker_id = int(os.environ.get("SLURM_PROCID", os.getpid() % 100)) + attempt
+        try:
+            channel = EngineConfigurationChannel()
+            channel.set_configuration_parameters(time_scale=20.0)
+            stats_channel = StatsSideChannel()
+            env = UnityToGymWrapper(
+                UnityEnvironment(
+                    "/home/noah/Downloads/export/unitybuild.x86_64",
+                    worker_id=worker_id,
+                    no_graphics=True,
+                    side_channels=[channel, stats_channel],
+                    additional_args=["-logFile", "mlagents.log"],
+                )
+            )
+            return env, stats_channel
+        except UnityWorkerInUseException:
+            print(f"Port for worker {worker_id} in use, retrying ({attempt + 1}/{max_attempts})")
+            time.sleep(cooldown)
+    raise RuntimeError(f"Could not find a free Unity communication port after {max_attempts} attempts")
+
+
 def load_params():
     params_path = pathlib.Path(__file__).resolve().parents[2] / "params.yaml"
     with open(params_path) as f:
@@ -74,17 +103,7 @@ def main():
         save_code=True,
     )
 
-    channel = EngineConfigurationChannel()
-    channel.set_configuration_parameters(time_scale=20.0)
-    stats_channel = StatsSideChannel()
-    env = UnityToGymWrapper(
-        UnityEnvironment(
-            "/home/noah/Downloads/export/unitybuild.x86_64",
-            no_graphics=True,
-            side_channels=[channel, stats_channel],
-            additional_args=["-logFile", "mlagents.log"],
-        )
-    )
+    env, stats_channel = make_env()
 
     policy_kwargs = dict(
         net_arch=dict(pi=[1024, 1024, 1024], vf=[1024, 1024, 1024]),
