@@ -4,6 +4,7 @@ import inspect
 import json
 import os
 import pathlib
+import re
 import yaml
 
 from mlagents_envs.environment import UnityEnvironment
@@ -98,6 +99,20 @@ def load_params():
         return yaml.safe_load(f)
 
 
+def wandb_group():
+    # Batch label for wandb's group panel: explicit env override wins, else
+    # derive from the DVC queue name (DVC_EXP_NAME="hpsearch-14" -> "hpsearch"),
+    # so every experiment queued in one `dvc exp run --queue -n <name>` batch
+    # lands in the same wandb group.
+    group = os.environ.get("WANDB_GROUP")
+    if group:
+        return group
+    exp_name = os.environ.get("DVC_EXP_NAME")
+    if exp_name:
+        return re.sub(r"-\d+$", "", exp_name)
+    return None
+
+
 def main():
     params = load_params()
     # PPO defaults straight from the installed SB3 signature — nothing hardcoded
@@ -116,6 +131,7 @@ def main():
         project="sb3",
         entity="tjno",
         config=config,
+        group=wandb_group(),
         sync_tensorboard=True,
         save_code=True,
     )
