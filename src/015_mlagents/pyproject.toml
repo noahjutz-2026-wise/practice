@@ -17,7 +17,8 @@ dependencies = [
 ]
 
 [project.scripts]
-ppo_example = "python_mlagents.main:main"
+ai_train = "python_mlagents.ai_train:main"
+ai_eval = "python_mlagents.ai_evaluate:main"
 experiment = "python_mlagents.experiment:main"
 
 [build-system]
