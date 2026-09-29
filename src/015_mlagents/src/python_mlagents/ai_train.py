@@ -23,7 +23,7 @@ from wandb.integration.sb3 import WandbCallback
 import wandb
 
 METRICS_KEYS = (
-    "train/policy_loss",
+    "train/policy_gradient_loss",
     "train/value_loss",
     "train/entropy_loss",
     "train/approx_kl",
