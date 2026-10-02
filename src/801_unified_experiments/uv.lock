@@ -1144,6 +1144,19 @@ wheels = [
 ]
 
 [[package]]
+name = "shimmy"
+version = "2.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "gymnasium" },
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/44/72/8b1774448fba768b8d30bebf4deae3c301138522135a4ff4ae8e6a4109ad/shimmy-2.0.1.tar.gz", hash = "sha256:8770a697dd1272e433a852f7efae9faf826b10b33e7301cc2ca1a3b22646ad0c", size = 32150, upload-time = "2026-04-10T10:56:36.487Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/89/40/a552f38102735e07966040a4d74134ae8334077776ea81fcc9a48432e716/shimmy-2.0.1-py3-none-any.whl", hash = "sha256:408535a906b01911f896da60c490c4195e0035db051125bb0bc05c0094487279", size = 30854, upload-time = "2026-04-10T10:56:35.506Z" },
+]
+
+[[package]]
 name = "six"
 version = "1.17.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1313,6 +1326,7 @@ dependencies = [
     { name = "mlagents-envs" },
     { name = "onnxruntime" },
     { name = "ray", extra = ["rllib"] },
+    { name = "shimmy" },
     { name = "torch" },
 ]
 
@@ -1322,6 +1336,7 @@ requires-dist = [
     { name = "mlagents-envs", specifier = ">=1.1.0" },
     { name = "onnxruntime", specifier = ">=1.23.2" },
     { name = "ray", extras = ["rllib"], specifier = ">=2.59.0" },
+    { name = "shimmy", specifier = ">=2.0.1" },
     { name = "torch", specifier = ">=2.14.1" },
 ]
 

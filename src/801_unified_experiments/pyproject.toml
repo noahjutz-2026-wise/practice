@@ -12,6 +12,7 @@ dependencies = [
     "mlagents-envs>=1.1.0",
     "onnxruntime>=1.23.2",
     "ray[rllib]>=2.59.0",
+    "shimmy>=2.0.1",
     "torch>=2.14.1",
 ]
 
