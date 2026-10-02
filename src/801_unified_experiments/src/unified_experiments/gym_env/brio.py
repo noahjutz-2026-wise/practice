@@ -1,5 +1,5 @@
 import gymnasium as gym
 
 
-def brio_gymnasium(bin_path: str) -> gym.Env:
+def make_brio_environment() -> gym.Env:
     raise NotImplementedError()
