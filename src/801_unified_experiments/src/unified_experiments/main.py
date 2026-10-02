@@ -1,5 +1,8 @@
+from .runtime.run import run
+
+
 def main() -> None:
-    pass
+    run()
 
 
 if __name__ == "__main__":
