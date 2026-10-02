@@ -1,0 +1,2 @@
+def algorithm() -> None:
+    pass
