@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.10.1, <=3.10.12"
 dependencies = [
+    "gymnasium>=1.2.2",
     "mlagents>=1.1.0",
     "mlagents-envs>=1.1.0",
     "onnxruntime>=1.23.2",

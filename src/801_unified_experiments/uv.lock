@@ -1322,6 +1322,7 @@ name = "unified-experiments"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "gymnasium" },
     { name = "mlagents" },
     { name = "mlagents-envs" },
     { name = "onnxruntime" },
@@ -1332,6 +1333,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "gymnasium", specifier = ">=1.2.2" },
     { name = "mlagents", specifier = ">=1.1.0" },
     { name = "mlagents-envs", specifier = ">=1.1.0" },
     { name = "onnxruntime", specifier = ">=1.23.2" },
